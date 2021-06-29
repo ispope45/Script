@@ -1,0 +1,11 @@
+pip install pywin32
+ > win32com
+ > Windows Extend (Excel, PowerPnt ..)
+
+pip install paramiko
+ > paramiko
+ > SSH
+
+pip install pyinstaller
+ > pyinstaller
+ > Creating Excutable file
