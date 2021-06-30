@@ -16,8 +16,8 @@ if money:
     print('2')
 #        print('3') syntex error
 
-print(1 < 2) # True
-print(1 > 2)# False
+print(1 < 2) # True123
+print(1 > 2) # False
 print(1 == 2) # False
 print(1 != 2) # True
 print(1 <= 2) # True
