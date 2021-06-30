@@ -1,16 +1,16 @@
 import paramiko
-from paramiko import SSHClient, BadAuthenticationType
 import time
 import win32com.client
 import os
+import csv
+
 
 OS_HOME_DRIVE = os.environ['HOMEDRIVE']
 OS_HOME_PATH = os.environ['HOMEPATH']
 CUR_PATH = os.getcwd()
 HOME_PATH = OS_HOME_DRIVE + OS_HOME_PATH + '\\Desktop\\'
-# SRC_FILE = CUR_PATH + '\\Python_diag.xlsx'
-# SRC_FILE = '\\\\Filesvr\\인프라사업부\\95. 정기점검\\고려대학교부속병원_구로병원\\Python_diag.xlsx'
-SRC_FILE = HOME_PATH + 'Python_diag.xlsx'
+SRC_FILE = CUR_PATH + '\\Python_diag.xlsx'
+#SRC_FILE = '\\\\Filesvr\\인프라사업부\\95. 정기점검\\고려대학교부속병원_구로병원\\Python_diag.xlsx'
 DST_PATH = CUR_PATH + '\\'
 
 
@@ -25,12 +25,10 @@ def main(sw_ip, sw_user, sw_pass):
     command.append('show syslog non-volatile tail\n')
     command.append('show temperature\n')
 
-    conn = paramiko.SSHClient()
-    conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
     try:
-        print(host + " // " + username + " // " + password)
-        conn.connect(host, port=22, username=username, password=password, allow_agent=False, look_for_keys=False)
+        conn = paramiko.SSHClient()
+        conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        conn.connect(host, username=username, password=password)
         channel = conn.invoke_shell()
         time.sleep(3)
 
@@ -74,16 +72,6 @@ if __name__ == "__main__":
 
     wb = excel.Workbooks.Open(SRC_FILE)
     ws = wb.ActiveSheet
-
-    f = open(DST_PATH + '_TEST.txt', "w+")
-    sw_ip = "211.37.9.2"
-    sw_user = "root"
-    sw_pass = "davolink"
-    e = main(sw_ip, sw_user, sw_pass)
-    for line in e:
-        print(line)
-        f.write(line)
-    f.close()
 
     for row in range(2, ws.UsedRange.Rows.Count+1):
         f = open(DST_PATH + f'{str(int(ws.Cells(row, 1).Value))}_{ws.Cells(row, 2).Value}.txt', "w+")

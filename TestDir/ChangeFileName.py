@@ -13,7 +13,7 @@ wb = excel.Workbooks.Open('C:\\Users\\Jungly\\Desktop\\3.xlsx')
 ws = wb.ActiveSheet
 
 
-#var 선언
+# var 선언
 name_list = []
 name2_list = []
 name3_list = []
@@ -21,7 +21,7 @@ aa = []
 i = 0
 count = 0
 
-#파일 전체리스트
+# 파일 전체리스트
 f_list = glob.glob("C:\\Users\\Jungly\\Desktop\\미래학교\\*")
 aa = f_list[0].split('\\')
 

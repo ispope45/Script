@@ -30,7 +30,6 @@ Column = {"COL_A": 1,
           "COL_R": 18,
           "COL_S": 19,
           "COL_T": 20}
-Config = "enable\n"
 
 START_LINE = 0
 END_LINE = 0
@@ -46,25 +45,16 @@ def main(s_ip, s_user, s_pass, s_port):
     port = s_port
 
     command = list()
-    # command.append('rhgoelqjrld\n')
-    # command.append('ghkdrmaenRjql\n')
-    # command.append(f'ssh {sw_user}@{sw_ip}\n -p 2004')
-    # command.append(f'{sw_pass}\n')
     command.append('enable\n')
     command.append('configure terminal\n')
-    # command.append(f'ip route 0.0.0.0/0 {sw_gw}\n')
     command.append('snmp-server community rw 1\n')
+    command.append('test1\n')  # SNMP Community String
     command.append('test1\n')
-    command.append('test1\n')
-    # command.append('snmp-server user schoolnet3 schoolnet3 v3 auth md5 Sen16701396! Priv des Sen16701396!\n')
-    # command.append(f'snmp-server host {nms_ip} version 3 priv schoolnet3\n')
-    # command.append('snmp-server enable traps\n')
-    # command.append('end\n')
-    # command.append('write memory\n')
-    # command.append('y\n')
+
+    conn = paramiko.SSHClient()
 
     try:
-        conn = paramiko.SSHClient()
+
         conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         conn.connect(host, port=port, username=username, password=password)
         channel = conn.invoke_shell()
@@ -72,13 +62,6 @@ def main(s_ip, s_user, s_pass, s_port):
         for line in command:
             channel.send(line)
             out_data, err_data = wait_streams(channel)
-            # if out_data.find("Are you sure you want to continue connecting (yes/no)? ") != -1:
-            #     channel.send("yes\n")
-            #     out_data, err_data = wait_streams(channel)
-            # elif out_data.find("Connection refused") != -1:
-            #     return "SSH Port Error"
-            # elif out_data.find("No route to host") != -1:
-            #     return "Host IP Error"
 
             print(out_data.replace("\\r\\n", "\n").replace("b'", ">>>"))
 
