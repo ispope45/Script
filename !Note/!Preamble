@@ -1,5 +1,5 @@
 
-** Excel 선언 및 호출
+** Excel(win32com) 선언 및 호출
 excel = win32com.client.Dispatch("Excel.Application")
 excel.Visible = False
 

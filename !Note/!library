@@ -9,3 +9,7 @@ pip install paramiko
 pip install pyinstaller
  > pyinstaller
  > Creating Excutable file
+
+pip install wget
+ > wget
+ > download URL

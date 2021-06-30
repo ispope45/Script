@@ -30,7 +30,7 @@ Column = {"COL_A": 1,
           "COL_R": 18,
           "COL_S": 19,
           "COL_T": 20}
-
+Config = "enable\n"
 
 START_LINE = 0
 END_LINE = 0
