@@ -1,0 +1,97 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+function ckENT(event){
+  var x = event.keyCode;
+  if (x==13)
+    calcSub()
+}
+function calcSub(){
+// GET VALUE
+  var ipaddr=document.getElementById("ipaddr").value;
+// IP AND VALUE SET
+  var _IP = new Array();
+  var _SUB = new Array();
+  var sub = ipaddr.slice(ipaddr.indexOf("/")+1);
+  ipaddr = ipaddr.slice(0,ipaddr.indexOf("/"));
+  _IP = ipaddr.split(".")
+// EXCEPT ERROR OR INDIVIDUAL VALUE
+  if(parseInt(sub)>32 || parseInt(sub)<1){
+    alert("잘못된 입력입니다.")
+    return 0;
+  }
+  for(i=0;i<4;i++)
+  {
+    if(parseInt(_IP[i]) > 256 || parseInt(_IP[i])<0){
+      alert("잘못된 입력입니다");
+      return 0;
+    }
+  }
+//CALC SUBNETTING
+  var s1=parseInt(sub/8);
+  var s2=sub%8;
+//alert(s1)
+//alert(s2)
+for(i=0;i<s1;i++)
+  _SUB[i]=255
+if(_SUB.length<=4)
+{
+  var i=_SUB.length
+  if(s2==0)
+    _SUB[i]=0
+  else  if(s2==1)
+    _SUB[i]=128
+  else  if(s2==2)
+    _SUB[i]=192
+  else  if(s2==3)
+    _SUB[i]=224
+  else  if(s2==4)
+    _SUB[i]=240
+  else  if(s2==5)
+    _SUB[i]=248
+  else  if(s2==6)
+    _SUB[i]=252
+  else  if(s2==7)
+    _SUB[i]=254
+}
+for(i=_SUB.length;i<=4;i++)
+{
+  _SUB[i]=0
+}
+//alert(_SUB[0])
+//alert(_SUB[1])
+//alert(_SUB[2])
+//alert(_SUB[3])
+var _NET = new Array
+var _BRD = new Array
+for(i=0;i<4;i++)
+{
+  _NET[i]=_IP[i]&_SUB[i]
+  _BRD[i]=_IP[i]|(~_SUB[i]+256)
+}
+// PRINT INFORMATION
+  str = ipaddr+'/'+sub+" 의 서브넷 정보는 <br />"
+  str += "----------------------------------<br />"
+  str += "네트워크 주소 : "+_NET[0]+"."+_NET[1]+"."+_NET[2]+"."+_NET[3]+"<br />"
+  str += "브로드 캐스트 주소 : "+_BRD[0]+"."+_BRD[1]+"."+_BRD[2]+"."+_BRD[3]+"<br />"
+  document.getElementById("demo").innerHTML = str;
+
+
+//alert(ipaddr)
+//alert(sub)
+
+
+}
+</script>
+</head>
+<body>
+<p>서브넷 마스크 계산기&nbsp;</p>
+<p><br /></p>
+
+<div class="tt_article_useless_p_margin">IP ADDR : <input type="text" value="192.168.0.1/24" id="ipaddr" onkeydown="ckENT(event)">&nbsp;<input type="button" value="계산" onclick="calcSub()"> <br>
+----------------------------------------------
+<p id="demo"></p>
+</body>
+</html>
