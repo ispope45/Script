@@ -1,0 +1,22 @@
+No.02__Bon_2F_24P_01> enable
+No.02__Bon_2F_24P_01#show syslog non-volatile tail
+Jun 24 23:26:37 No NSM[285]: err: Interface ge16 is up
+Jun 24 23:26:37 No NSM[285]: err: Interface ge17 is up
+Jun 24 23:26:38 No NSM[285]: err: Interface ge18 is up
+Jun 24 23:26:39 No NSM[285]: err: Interface ge19 is up
+Jun 24 23:26:39 No NSM[285]: err: Interface ge20 is up
+Jun 24 23:26:40 No NSM[285]: err: Interface ge21 is up
+Jun 24 23:26:41 No NSM[285]: err: Interface ge22 is up
+Jun 24 23:26:42 No NSM[285]: err: Interface ge24 is up
+Jun 24 23:26:42 No NSM[285]: err: Interface ge7 is up
+Jun 24 23:26:52 No NSM[285]: err: Interface ge23 is up
+No.02__Bon_2F_24P_01#show temperature
+
+Temperature threshold   : 0C, 80C
+Current Temperature     : 55.00 
+
+FAN operation threshold : 40C, 70C as High Speed
+FAN operation mode      : AUTO
+FAN operation status    : WORK WORK WORK WORK FAIL FAIL 
+
+No.02__Bon_2F_24P_01# 
