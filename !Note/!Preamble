@@ -27,7 +27,7 @@ Column = {"COL_A": 1,
 START_LINE = 0
 END_LINE = 0
 
-wb = excel.Workbooks.Open('C:\\Users\\Jungle\\Desktop\\1.xlsx')
+wb = excel.Workbooks.Open(SRC_FILE)
 ws = wb.ActiveSheet
 
 if START_LINE == 0:
