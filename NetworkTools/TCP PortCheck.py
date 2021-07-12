@@ -19,7 +19,7 @@ form_desc = '■ TCP Port Test\n' \
             'A:No(r) / B:Name(r) / C:IP(r) / D:Port(r) / E:Desc(w)\n'
 
 START_LINE = 0
-END_LINE = 5
+END_LINE = 0
 
 
 # FUNCTION
@@ -47,6 +47,8 @@ if __name__ == "__main__":
     wb = openpyxl.load_workbook(SRC_FILE)
     ws = wb.active
 
+    cnt = 0
+
     if START_LINE == 0:
         startRow = 2
     else:
@@ -66,4 +68,8 @@ if __name__ == "__main__":
         print(f"########### {i - 1} / {totalRows - 2} ###########")
         res = port_check(val_ip, val_port)
         ws['E' + row].value = res
-        wb.save(filename=SRC_FILE)
+
+        cnt = cnt + 1
+        if cnt == 50:
+            wb.save(filename=SRC_FILE)
+            cnt = 0
