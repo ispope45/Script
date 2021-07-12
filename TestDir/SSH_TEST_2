@@ -25,7 +25,7 @@ cmd1 = ['enable\n', 'show interface status\n']
 cmd2 = ['enable\n', 'show power inline port-status\n']
 
 
-def main(sw_ip, sw_user, sw_pass, command):
+def main(sw_ip, sw_user, sw_pass, sw_port, command):
     host = sw_ip
     username = sw_user
     password = sw_pass
@@ -42,7 +42,7 @@ def main(sw_ip, sw_user, sw_pass, command):
     try:
         conn = paramiko.SSHClient()
         conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        conn.connect(host, username=username, password=password, port=9992)
+        conn.connect(host, username=username, password=password, port=sw_port)
         channel = conn.invoke_shell()
         time.sleep(3)
 
@@ -109,17 +109,20 @@ if __name__ == "__main__":
         totalRows = END_LINE
 
     for i in range(startRow, totalRows):
-        try:
-            row = str(i)
-            val_name = ws['B' + row].value
-            val_devName = ws['C' + row].value
-            val_ip = ws['D' + row].value
-            val_port = ws['E' + row].value
-            val_id = "admin"
-            val_password = "frontier1!"
 
-            res, err = main(val_ip, val_id, val_password, cmd1)
-            res2, err2 = main(val_ip, val_id, val_password, cmd2)
+        row = str(i)
+        val_name = ws['B' + row].value
+        val_devName = ws['C' + row].value
+        val_ip = ws['D' + row].value
+        val_port = ws['E' + row].value
+        val_id = "admin"
+        val_password = "frontier1!"
+
+        print(f'{val_name} : {val_devName}({val_ip})')
+
+        try:
+            res, err = main(val_ip, val_id, val_password, val_port, cmd1)
+            res2, err2 = main(val_ip, val_id, val_password, val_port, cmd2)
 
             if err:
                 continue
@@ -130,7 +133,7 @@ if __name__ == "__main__":
             power_stat = list()
 
             # print(val_name + " : " + val_devName + "(")
-            print(f'{val_name} : {val_devName}({val_ip})')
+
             for r in res:
                 if "Gi" in r:
                     val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
@@ -156,7 +159,7 @@ if __name__ == "__main__":
 
             target_wb.save(filename=DST_FILE)
         except Exception as e:
-            print("Error")
+            print(e)
     #
     # res, err = main(val_ip, val_id, val_password, cmd1)
     # res2, err2 = main(val_ip, val_id, val_password, cmd2)
