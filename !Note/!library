@@ -13,3 +13,6 @@ pip install pyinstaller
 pip install wget
  > wget
  > download URL
+
+pip install Pillow
+ > image Control
