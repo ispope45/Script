@@ -1,6 +1,5 @@
 import paramiko
 import time
-import socket
 import os
 import openpyxl
 
@@ -11,17 +10,16 @@ HOME_PATH = OS_HOME_DRIVE + OS_HOME_PATH
 
 SRC_PATH = HOME_PATH + '\\Desktop\\src\\'
 DST_PATH = HOME_PATH + '\\Desktop\\dst\\'
-# SRC_FILE = HOME_PATH + '\\Desktop\\port.xlsx'
-SRC_FILE = HOME_PATH + '\\Desktop\\port.xlsx'
+SRC_FILE = HOME_PATH + '\\Desktop\\Dev_List.xlsx'
 DST_FILE = HOME_PATH + '\\Desktop\\dst.xlsx'
-# test_ip = ['192.168.0.254', '192.168.0.253', '192.168.0.252', '192.168.0.251', '192.168.0.250']
-# test_port = [22, 80, 50005]
+
 form_desc = '■ PoE Switch Diagnose Tool \n\n'
 
-START_LINE = 0
-END_LINE = 0
+#  0 = 처음(2)부터 끝까지
+START_LINE = 0  # 부터
+END_LINE = 0  # 이전까지
 
-cmd1 = ['enable\n', 'show interface status\n']
+cmd1 = ['enable\n', 'show interface status\n', ' ', ' ', 'show power inline port-status\n', ' ', ' ']
 cmd2 = ['enable\n', 'show power inline port-status\n']
 
 
@@ -31,36 +29,21 @@ def main(sw_ip, sw_user, sw_pass, sw_port, command):
     password = sw_pass
 
     output = list()
-    err = list()
-    # command = list()
-    # command.append('enable\n')
-    # command.append('show port phy-diag\n')
-    command.append(' ')
-    command.append(' ')
-    command.append(' ')
 
     try:
         conn = paramiko.SSHClient()
         conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         conn.connect(host, username=username, password=password, port=sw_port)
         channel = conn.invoke_shell()
-        time.sleep(3)
+        time.sleep(2)
 
         for line in command:
             channel.send(line)
             out_data, err_data = wait_streams(channel)
-            # output.append(out_data)
-            # err.append(err_data)
-            # print(err_data)
             tmp = out_data.split("\\r\\n")
 
-            for val in tmp:
-                output.append(val)
-
-            # a = out_data.replace("\\r\\n", "\n").replace("\\r", "")
-            # b = a.replace('b"', "").replace("b'", "").replace(" '", "").replace('"', "")
-            #
-            # output.append(a)
+            for v in tmp:
+                output.append(v)
 
         return output
 
@@ -78,12 +61,11 @@ def main(sw_ip, sw_user, sw_pass, sw_port, command):
 
 
 def wait_streams(channel):
-    time.sleep(1)
+    time.sleep(0.1)
     out_data = ""
     err_data = ""
 
     while channel.recv_ready():
-        # print(channel.recv)
         out_data += str(channel.recv(1000))
     while channel.recv_stderr_ready():
         err_data += str(channel.recv_stderr(1000))
@@ -100,6 +82,7 @@ if __name__ == "__main__":
 
     target_wb = openpyxl.load_workbook(DST_FILE)
     target_ws = target_wb.active
+
     cnt = 1
 
     if START_LINE == 0:
@@ -122,37 +105,40 @@ if __name__ == "__main__":
         val_id = "admin"
         val_password = "frontier1!"
 
-        print(f'{val_name} : {val_devName}({val_ip})')
+        print(f'\n\n{val_name} : {val_devName}({val_ip})')
 
         try:
+            s_time = time.time()
             res = main(val_ip, val_id, val_password, val_port, cmd1)
-            res2 = main(val_ip, val_id, val_password, val_port, cmd2)
-
+            e_time = time.time()
+            print("SSH 소요시간 : " + str(e_time - s_time))
             if "Error" in res:
                 f = open(DST_PATH + "log.txt", "a+")
                 f.write(f'{val_name} : {val_devName}({val_ip}) : {res}\n')
                 f.close()
                 print(res)
                 continue
-
+            # res2 = main(val_ip, val_id, val_password, val_port, cmd2)
             port_val = list()
             power_val = list()
             port_stat = list()
             power_stat = list()
 
-            # print(val_name + " : " + val_devName + "(")
-
             for r in res:
-                if "Gi" in r:
+                if "Gi0/" in r:
                     val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
                     port_val = [val[:6].strip(), val[28:38].strip()]
                     port_stat.append(port_val)
-
-            for r in res2:
-                if "Gi" in r:
+                elif "Giga0/" in r:
                     val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
                     power_val = [val[:8].strip(), val[12:25].strip(), val[27:47].strip()]
                     power_stat.append(power_val)
+
+            # for r in res2:
+            #     if "Gi" in r:
+            #         val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
+            #         power_val = [val[:8].strip(), val[12:25].strip(), val[27:47].strip()]
+            #         power_stat.append(power_val)
 
             for j in range(0, len(power_stat)):
                 cnt += 1
@@ -166,58 +152,7 @@ if __name__ == "__main__":
                 target_ws['H' + str(cnt)].value = power_stat[j][2]
 
             target_wb.save(filename=DST_FILE)
+
         except Exception as e:
             print(e)
-    #
-    # res, err = main(val_ip, val_id, val_password, cmd1)
-    # res2, err2 = main(val_ip, val_id, val_password, cmd2)
-    # # print(res)
-    # port_val = list()
-    # power_val = list()
-    # port_stat = list()
-    # power_stat = list()
-    # for r in res:
-    #     if "Gi" in r:
-    #         val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
-    #         # print(val[:6].strip())
-    #         # print(val[28:38].strip())
-    #         port_val = [val[:6].strip(), val[28:38].strip()]
-    #         port_stat.append(port_val)
-    #
-    #     # print(r)
-    #     # if "Model" in r:
-    #     #     print(r)
-    #
-    # for r in res2:
-    #     if "Gi" in r:
-    #         val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
-    #         # print(val[:47])  # 0:6, 13:24, 27:47
-    #         # print(val[:7].strip())
-    #         # print(val[12:25].strip())
-    #         # print(val[27:47].strip())
-    #         power_val = [val[:7].strip(), val[12:25].strip(), val[27:47].strip()]
-    #         power_stat.append(power_val)
-    #
-    #     # print(r)
-    #
-    # # print(port_stat)
-    # # print(power_stat)
-    # for v1 in port_stat:
-    #     for v in v1:
-    #         print(v)
-    #
-    # for v2 in power_stat:
-    #     for v in v2:
-    #         print(v)
-    #
-    # for e in err:
-    #     print(e)
-    #
-    # # print(port_stat)
-    # # print(power_stat)
-    # #
-    # # for val in port_stat:
-    # #     print(val)
-    # #
-    # # for val in power_stat:
-    # #     print(val)
+    target_wb.close()
