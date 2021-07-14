@@ -20,3 +20,7 @@ pip install Pillow
 pip install pytesseract
  > python for tesseract
  > image to string (OCR)
+
+pip install opencv-python
+ > python for opencv
+ > image preprocess
