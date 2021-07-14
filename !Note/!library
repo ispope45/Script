@@ -16,3 +16,7 @@ pip install wget
 
 pip install Pillow
  > image Control
+
+pip install pytesseract
+ > python for tesseract
+ > image to string (OCR)
