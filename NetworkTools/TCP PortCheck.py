@@ -9,8 +9,9 @@ HOME_PATH = OS_HOME_DRIVE + OS_HOME_PATH
 
 SRC_PATH = HOME_PATH + '\\Desktop\\src\\'
 DST_PATH = HOME_PATH + '\\Desktop\\dst\\'
-# SRC_FILE = HOME_PATH + '\\Desktop\\port.xlsx'
-SRC_FILE = HOME_PATH + '\\Desktop\\Dev_List_20210706.xlsx'
+
+SRC_FILE = SRC_PATH + 'Dev_List_20210706_PoE.xlsx'
+# SRC_FILE = SRC_PATH + 'Dev_List_20210706_AP.xlsx'
 
 # test_ip = ['192.168.0.254', '192.168.0.253', '192.168.0.252', '192.168.0.251', '192.168.0.250']
 # test_port = [22, 80, 50005]
@@ -34,11 +35,9 @@ def port_check(ip, port):
         print("Error : " + e)
 
     if result == 0:
-        print(str(ip) + ":" + str(port) + " Port Opened")
-        return "Port Opened"
+        return True
     else:
-        print(str(ip) + ":" + str(port) + " Not Connected")
-        return "Not Connected"
+        return False
 
 
 if __name__ == "__main__":
@@ -62,14 +61,22 @@ if __name__ == "__main__":
     for i in range(startRow, totalRows):
         row = str(i)
 
+        val_devName = ws['B' + row].value
         val_ip = ws['C' + row].value
         val_port = ws['D' + row].value
 
         print(f"########### {i - 1} / {totalRows - 2} ###########")
         res = port_check(val_ip, val_port)
-        ws['E' + row].value = res
+        if res:
+            print(f"{val_devName} / {str(val_ip)}:{str(val_port)} Port Opened\n")
+            ws['E' + row].value = "Port Opened"
+        else:
+            print(f"{val_devName} / {str(val_ip)}:{str(val_port)} Not Connected\n")
+            ws['E' + row].value = "Not Connected"
 
         cnt = cnt + 1
         if cnt == 50:
             wb.save(filename=SRC_FILE)
             cnt = 0
+
+    wb.save(filename=SRC_FILE)

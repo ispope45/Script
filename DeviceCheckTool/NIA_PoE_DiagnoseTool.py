@@ -33,7 +33,7 @@ def main(sw_ip, sw_user, sw_pass, sw_port, command):
     try:
         conn = paramiko.SSHClient()
         conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        conn.connect(host, username=username, password=password, port=sw_port)
+        conn.connect(host, username=username, password=password, port=sw_port, timeout=10)
         channel = conn.invoke_shell()
         time.sleep(2)
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
             s_time = time.time()
             res = main(val_ip, val_id, val_password, val_port, cmd1)
             e_time = time.time()
-            print("SSH 소요시간 : " + str(e_time - s_time))
+            print("SSH 연결 소요시간 : " + str(e_time - s_time))
             if "Error" in res:
                 f = open(DST_PATH + "log.txt", "a+")
                 f.write(f'{val_name} : {val_devName}({val_ip}) : {res}\n')
