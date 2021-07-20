@@ -3,7 +3,7 @@ from openpyxl.drawing.image import Image
 
 # 선언
 wb = openpyxl.Workbook()
-wb2 = openpyxl.load_workbook("C:\\Users\\Jungly\\Desktop\\3.xlsx")
+wb2 = openpyxl.load_workbook("C:\\Users\\Jungly\\Desktop\\11.xlsx")
 
 # 워크시트
 wb.create_sheet('TEST1', 0)  # 0 : 왼쪽에 생성, 1 : 오른쪽에 생성
