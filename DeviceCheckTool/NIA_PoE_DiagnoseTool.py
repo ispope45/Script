@@ -85,6 +85,8 @@ if __name__ == "__main__":
 
     cnt = 1
 
+    startTime = time.time()
+
     if START_LINE == 0:
         startRow = 2
     else:
@@ -105,7 +107,9 @@ if __name__ == "__main__":
         val_id = "admin"
         val_password = "frontier1!"
 
-        print(f'\n\n{val_name} : {val_devName}({val_ip})')
+        nowTime = time.time()
+
+        print(f'\n\n{val_name} : {val_devName}({val_ip}) // Remain Time : {nowTime - startTime}')
 
         try:
             s_time = time.time()
