@@ -24,3 +24,6 @@ pip install pytesseract
 pip install opencv-python
  > python for opencv
  > image preprocess
+
+ pip install beautifulsoup4
+ > python for SOAP
