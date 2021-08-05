@@ -13,10 +13,10 @@ login_data = {
 }
 
 setting_data = {
-    'disabled': '0',
-    'ssid': 'SenWiFi_Free',
-    'hidden': '1',
-    'key': 'sen2021!wi',
+    'disabled': '0',  # 0:Enable, 1:Disable
+    'ssid': 'SenWiFi_Free',  # SSID
+    'hidden': '1',  # 1:Hide SSID
+    'key': 'sen2021!wi',  # password
     'key1': '',
     'key_type': 'ascii',
     'wep_key_type': 'hex',

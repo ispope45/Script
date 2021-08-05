@@ -7,6 +7,8 @@ import datetime
 import time
 import urllib3
 
+# id / 집선청 / 구분 / 설치업체 / 학교명 / vendor / name / ip / port / ssid / 패스워드
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # GLOBAL
@@ -22,6 +24,10 @@ SRC_FILE = SRC_PATH + 'TEST1.xlsx'
 
 START_LINE = 0
 END_LINE = 0
+
+form_desc = '■ Auto Ap Config Tool\n' \
+            'Read IP, Port number and AP configuraion. \n\n' \
+            'id / 집선청 / 구분 / 설치업체 / 학교명 / vendor / name / ip / port / ssid / 패스워드 \n\n'
 
 
 def port_check(ip, port):
@@ -257,8 +263,11 @@ def davo_web(ip, ssid, pwd):
 
 
 if __name__ == "__main__":
+    print(form_desc)
+
     wb = openpyxl.load_workbook(SRC_FILE)
     ws = wb.active
+    cnt = 0
 
     if START_LINE == 0:
         startRow = 2
@@ -296,7 +305,6 @@ if __name__ == "__main__":
                 res = allradio_web(val_ip, val_ssid, val_pass)
 
             ws['L' + str(i)].value = str(res)
-            wb.save(filename=SRC_FILE)
 
         else:
             ws['L' + str(i)].value = "TCP Port Closed"
@@ -305,5 +313,10 @@ if __name__ == "__main__":
         endTime = time.time()
         print("Remain time : ", endTime - startTime)
         print("=========================================================\n\n")
+
+        cnt += 1
+        if cnt > 50:
+            wb.save(filename=SRC_FILE)
+            cnt = 0
 
     wb.save(filename=SRC_FILE)

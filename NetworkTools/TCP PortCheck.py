@@ -53,9 +53,6 @@ def ping_check(ip):
         print("Error : " + e)
 
 
-
-
-
 if __name__ == "__main__":
     print(form_desc)
     startTime = time.time()
