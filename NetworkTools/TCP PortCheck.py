@@ -2,6 +2,7 @@ import socket
 import os
 import openpyxl
 import time
+from icmplib import ping
 
 # GLOBAL
 OS_HOME_DRIVE = os.environ['HOMEDRIVE']
@@ -43,8 +44,8 @@ def port_check(ip, port):
 
 def ping_check(ip):
     try:
-        response = os.system("ping -n 1 " + ip)
-        if response == 0:
+        response = ping(ip, count=1, timeout=0.6)
+        if response.is_alive:
             return True
         else:
             return False
@@ -94,7 +95,7 @@ if __name__ == "__main__":
             ws['E' + row].value = "Not Connected"
 
         cnt = cnt + 1
-        if cnt == 50:
+        if cnt == 1000:
             wb.save(filename=SRC_FILE)
             cnt = 0
 

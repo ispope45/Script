@@ -1,13 +1,13 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 block_cipher = None
 
 
-a = Analysis(['TEST'],
-             pathex=['D:\\Python\\Script\\TestDir\\TEST'],
+a = Analysis(['TEST3.py'],
+             pathex=['D:\Python\Script\TestDir\TEST'],
              binaries=[],
-             datas=[],
+             datas=[('HCSFP32.ocx','.'),
+             ('HCSFP64.ocx','.')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -15,7 +15,7 @@ a = Analysis(['TEST'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher,
-             noarchive=False)
+             noarchive=True)
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
@@ -24,7 +24,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='TEST',
+          name='ocx_test',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,

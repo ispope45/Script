@@ -10,8 +10,9 @@ HOME_PATH = OS_HOME_DRIVE + OS_HOME_PATH
 
 SRC_PATH = HOME_PATH + '\\Desktop\\src\\'
 DST_PATH = HOME_PATH + '\\Desktop\\dst\\'
-SRC_FILE = HOME_PATH + '\\Desktop\\Dev_List.xlsx'
-DST_FILE = HOME_PATH + '\\Desktop\\dst.xlsx'
+
+SRC_FILE = HOME_PATH + '\\Desktop\\src\\Dev_List.xlsx'
+DST_FILE = HOME_PATH + '\\Desktop\\dst\\dst.xlsx'
 
 form_desc = '■ PoE Switch Diagnose Tool \n\n'
 
@@ -131,7 +132,7 @@ if __name__ == "__main__":
             for r in res:
                 if "Gi0/" in r:
                     val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
-                    port_val = [val[:6].strip(), val[28:38].strip()]
+                    port_val = [val[:6].strip(), val[28:38].strip(), val[61:68].strip()]
                     port_stat.append(port_val)
                 elif "Giga0/" in r:
                     val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
@@ -151,9 +152,10 @@ if __name__ == "__main__":
                 target_ws['C' + str(cnt)].value = val_ip
                 target_ws['D' + str(cnt)].value = port_stat[j][0]
                 target_ws['E' + str(cnt)].value = port_stat[j][1]
-                target_ws['F' + str(cnt)].value = power_stat[j][0]
-                target_ws['G' + str(cnt)].value = power_stat[j][1]
-                target_ws['H' + str(cnt)].value = power_stat[j][2]
+                target_ws['F' + str(cnt)].value = port_stat[j][2]
+                target_ws['G' + str(cnt)].value = power_stat[j][0]
+                target_ws['H' + str(cnt)].value = power_stat[j][1]
+                target_ws['I' + str(cnt)].value = power_stat[j][2]
 
             target_wb.save(filename=DST_FILE)
 

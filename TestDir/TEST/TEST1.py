@@ -15,6 +15,8 @@ try:
     # file1 = resource_path("1.msu")
     file2 = resource_path("2.msi")
     file3 = resource_path("3.msi")
+    file4 = resource_path("HCSFP32.ocx")
+    file5 = resource_path("HCSFP32.ocx")
 
     # file1 = "1.msu"
     # file2 = "2.msi"

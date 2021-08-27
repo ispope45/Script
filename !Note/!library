@@ -27,3 +27,6 @@ pip install opencv-python
 
  pip install beautifulsoup4
  > python for SOAP
+
+pip install icmplib
+ > ping test
