@@ -10,40 +10,34 @@ def resource_path(relative_path):
 
 
 try:
-    # file1 = resource_path("1.msu")
-    # file2 = resource_path("2.msi")
-    # file3 = resource_path("3.msi")
     file4 = resource_path("HCSFP32.ocx")
     file5 = resource_path("HCSFP64.ocx")
 
-    # file1 = "1.msu"
-    # file2 = "2.msi"
-    # file3 = "3.msi"
+    src_file1 = "C:\Program Files\Adobe Flash Player\HCSFP64.ocx"
+    src_file2 = "C:\Program Files\Adobe Flash Player\HCSFP32.ocx"
 
-    # print(file1)
+    dst_file1 = "C:\Program Files\Adobe Flash Player\HCSFP64_old.ocx"
+    dst_file2 = "C:\Program Files\Adobe Flash Player\HCSFP32_old.ocx"
+
     print(file4)
     print(file5)
 
-    # print("1/3 install...")
-    # res1 = os.system("wusa /quiet " + file1)
-    # # res1 = os.system("wusa " + file1)
-    # chk = True
-    # while chk:
-    #     time.sleep(3)
-    #     psChk = os.popen("TASKLIST | FINDSTR \"wusa\" | FINDSTR \"Console\"").read()
-    #     psChk2 = psChk.find("wusa")
-    #     if psChk2 == -1:
-    #         chk = False
     print("Change Adobe Flash Player Resource")
-    os.rename("C:\\Program Files\\Adobe Flash Player\\HCSFP64.ocx",
-              "C:\\Program Files\\Adobe Flash Player\\HCSFP64_old.ocx")
 
-    os.rename("C:\\Program Files\\Adobe Flash Player\\HCSFP32.ocx",
-              "C:\\Program Files\\Adobe Flash Player\\HCSFP32_old.ocx")
+    if os.path.isfile(src_file1):
+        os.rename(src_file1, dst_file1)
+    else:
+        print(src_file1 + " Not Found")
 
-    shutil.copy(file4, "C:\\Program Files\\Adobe Flash Player\\HCSFP32.ocx")
-    shutil.copy(file5, "C:\\Program Files\\Adobe Flash Player\\HCSFP64.ocx")
+    if os.path.isfile(src_file2):
+        os.rename(src_file2, dst_file2)
+    else:
+        print(src_file2 + " Not Found")
+
+    shutil.copy(file4, src_file1)
+    shutil.copy(file5, src_file2)
     print("Complete")
 
 except Exception as e:
     print(e)
+

@@ -1,0 +1,29 @@
+-------- ------------------ ------------ ---------- ------- ------- ----------------
+Gi0/1                       connected    1             full   a-100 10/100/1000BaseT
+Gi0/2                       connected    1             full  a-1000 10/100/1000BaseT
+Gi0/3                       connected    1             full  a-1000 10/100/1000BaseT
+Gi0/4                       connected    1             full  a-1000 10/100/1000BaseT
+Gi0/5                       notconnect   1             full    auto 10/100/1000BaseT
+Gi0/6                       notconnect   1             full    auto 10/100/1000BaseT
+Gi0/7                       notconnect   1             full    auto 10/100/1000BaseT
+Gi0/8                       notconnect   1             full    auto 10/100/1000BaseT
+Gi0/9                       notconnect   1             full    auto 10/100/1000BaseT
+Gi0/10                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/11                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/12                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/13                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/14                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/15                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/16                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/17                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/18                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/19                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/20                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/21                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/22                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/23                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/24                      notconnect   1             full    auto 10/100/1000BaseT
+Gi0/25                      connected    1             full  a-1000 1000BaseLX
+Gi0/26                      notconnect   1             full   10000 Not Present
+Gi0/27                      notconnect   1             full   10000 Not Present
+Gi0/28                      notconnect   1             full   10000 Not Present
