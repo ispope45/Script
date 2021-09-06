@@ -30,3 +30,6 @@ pip install opencv-python
 
 pip install icmplib
  > ping test
+
+pip install xlrd
+ > xls to xlsx

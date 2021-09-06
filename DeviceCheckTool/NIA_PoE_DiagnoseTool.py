@@ -2,6 +2,7 @@ import paramiko
 import time
 import os
 import openpyxl
+import socket
 
 # GLOBAL
 OS_HOME_DRIVE = os.environ['HOMEDRIVE']
@@ -17,7 +18,7 @@ DST_FILE = HOME_PATH + '\\Desktop\\dst\\dst.xlsx'
 form_desc = '■ PoE Switch Diagnose Tool \n\n'
 
 #  0 = 처음(2)부터 끝까지
-START_LINE = 0  # 부터
+START_LINE = 3641  # 부터
 END_LINE = 0  # 이전까지
 
 cmd1 = ['enable\n', 'show interface status\n', ' ', ' ', 'show power inline port-status\n', ' ', ' ']
@@ -59,6 +60,22 @@ def main(sw_ip, sw_user, sw_pass, sw_port, command):
     finally:
         if conn is not None:
             conn.close()
+
+
+def port_check(ip, port):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(0.5)
+        result = sock.connect_ex((ip, port))
+        sock.close()
+    except socket.error as e:
+        result = 1
+        print("Error : " + e)
+
+    if result == 0:
+        return True
+    else:
+        return False
 
 
 def wait_streams(channel):
@@ -107,58 +124,68 @@ if __name__ == "__main__":
         val_port = ws['E' + row].value
         val_id = "admin"
         val_password = "frontier1!"
-
         nowTime = time.time()
 
         print(f'\n\n{val_name} : {val_devName}({val_ip}) // Remain Time : {nowTime - startTime}')
 
         try:
-            s_time = time.time()
-            res = main(val_ip, val_id, val_password, val_port, cmd1)
-            e_time = time.time()
-            print("SSH 연결 소요시간 : " + str(e_time - s_time))
-            if "Error" in res:
+            ck = port_check(val_ip, val_port)
+            if ck:
+                s_time = time.time()
+                res = main(val_ip, val_id, val_password, val_port, cmd1)
+                e_time = time.time()
+                print("SSH 연결 소요시간 : " + str(e_time - s_time))
+                if "Error" in res:
+                    f = open(DST_PATH + "log.txt", "a+")
+                    f.write(f'{val_name} : {val_devName}({val_ip}) : {res}\n')
+                    f.close()
+                    print(res)
+                    continue
+                # res2 = main(val_ip, val_id, val_password, val_port, cmd2)
+                port_val = list()
+                power_val = list()
+                port_stat = list()
+                power_stat = list()
+
+                for r in res:
+                    if "Gi0/" in r:
+                        val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
+                        port_val = [val[:6].strip(), val[28:38].strip(), val[61:68].strip()]
+                        port_stat.append(port_val)
+                    elif "Giga0/" in r:
+                        val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
+                        power_val = [val[:8].strip(), val[12:25].strip(), val[27:47].strip()]
+                        power_stat.append(power_val)
+
+                # for r in res2:
+                #     if "Gi" in r:
+                #         val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
+                #         power_val = [val[:8].strip(), val[12:25].strip(), val[27:47].strip()]
+                #         power_stat.append(power_val)
+
+                for j in range(0, len(power_stat)):
+                    cnt += 1
+                    target_ws['A' + str(cnt)].value = val_name
+                    target_ws['B' + str(cnt)].value = val_devName
+                    target_ws['C' + str(cnt)].value = val_ip
+                    target_ws['D' + str(cnt)].value = port_stat[j][0]
+                    target_ws['E' + str(cnt)].value = port_stat[j][1]
+                    target_ws['F' + str(cnt)].value = port_stat[j][2]
+                    target_ws['G' + str(cnt)].value = power_stat[j][0]
+                    target_ws['H' + str(cnt)].value = power_stat[j][1]
+                    target_ws['I' + str(cnt)].value = power_stat[j][2]
+
+                if i % 20 == 0:
+                    target_wb.save(filename=DST_FILE)
+                # nowTime = time.time()
+                # print("누적소요시간 : " + str(nowTime - startTime))
+            else:
                 f = open(DST_PATH + "log.txt", "a+")
-                f.write(f'{val_name} : {val_devName}({val_ip}) : {res}\n')
+                f.write(f'{val_name} : {val_devName}({val_ip}) : Port Closed\n')
                 f.close()
-                print(res)
-                continue
-            # res2 = main(val_ip, val_id, val_password, val_port, cmd2)
-            port_val = list()
-            power_val = list()
-            port_stat = list()
-            power_stat = list()
-
-            for r in res:
-                if "Gi0/" in r:
-                    val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
-                    port_val = [val[:6].strip(), val[28:38].strip(), val[61:68].strip()]
-                    port_stat.append(port_val)
-                elif "Giga0/" in r:
-                    val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
-                    power_val = [val[:8].strip(), val[12:25].strip(), val[27:47].strip()]
-                    power_stat.append(power_val)
-
-            # for r in res2:
-            #     if "Gi" in r:
-            #         val = (r.replace("b'", "").replace("\\r", "").replace("'", ""))
-            #         power_val = [val[:8].strip(), val[12:25].strip(), val[27:47].strip()]
-            #         power_stat.append(power_val)
-
-            for j in range(0, len(power_stat)):
-                cnt += 1
-                target_ws['A' + str(cnt)].value = val_name
-                target_ws['B' + str(cnt)].value = val_devName
-                target_ws['C' + str(cnt)].value = val_ip
-                target_ws['D' + str(cnt)].value = port_stat[j][0]
-                target_ws['E' + str(cnt)].value = port_stat[j][1]
-                target_ws['F' + str(cnt)].value = port_stat[j][2]
-                target_ws['G' + str(cnt)].value = power_stat[j][0]
-                target_ws['H' + str(cnt)].value = power_stat[j][1]
-                target_ws['I' + str(cnt)].value = power_stat[j][2]
-
-            target_wb.save(filename=DST_FILE)
 
         except Exception as e:
             print(e)
+
+    target_wb.save(filename=DST_FILE)
     target_wb.close()
