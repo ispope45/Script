@@ -48,13 +48,18 @@ if __name__ == "__main__":
     print(filename.find(".xlsx"))
 
     if filename.find(".xlsx") == -1:
-        # load_wb = convert_xls_to_xlsx(FILENAME)
-        b_filename = filename
-        a_filename = filename.replace(".xls", ".xlsx")
-        os.rename(b_filename, a_filename)
-        filename = a_filename
+        try:
+            load_wb = convert_xls_to_xlsx(filename)
+        except Exception as e:
+            print(e)
+            b_filename = filename
+            a_filename = filename.replace(".xls", ".xlsx")
+            os.rename(b_filename, a_filename)
+            filename = a_filename
+            load_wb = openpyxl.load_workbook(filename, data_only=True)
+    else:
+        load_wb = openpyxl.load_workbook(filename, data_only=True)
 
-    load_wb = openpyxl.load_workbook(filename, data_only=True)
     load_ws = load_wb.active
 
     if START_LINE == 0:
@@ -80,14 +85,22 @@ if __name__ == "__main__":
     load_ws['B1'].value = "대분류"
     load_ws['C1'].value = "중분류"
 
-    load_ws.Range(f'A2:Q{str(totalRows)}').Sort(Key1=load_ws.Range('B1:D1'), Order1=1, Orientation=1)
-
     for i in range(startRow, totalRows):
         row = str(i)
-        idx = classname.index(load_ws['D' + row].value)
+        try:
+            idx = classname.index(load_ws['D' + row].value)
 
-        load_ws['B' + row].value = midclass[idx]
-        load_ws['C' + row].value = midclass[idx]
+            load_ws['B' + row].value = midclass[idx]
+            load_ws['C' + row].value = midclass[idx]
+        except Exception as e:
+            print(e)
+            load_ws['B' + row].value = "Not classified value"
+            load_ws['C' + row].value = "Not classified value"
+
+    load_ws.auto_filter.ref = f'A1:Q{str(totalRows)}'
+    load_ws.auto_filter.add_sort_condition(f'B2:C{str(totalRows)}')
+
+    load_wb.save(filename)
 
     # print(classname)
     # print(len(classname))
@@ -106,7 +119,7 @@ if __name__ == "__main__":
 
 
 
-    load_wb.save(filename)
+
 
     # sheets = load_wb.sheetnames
     #
