@@ -33,3 +33,11 @@ pip install icmplib
 
 pip install xlrd
  > xls to xlsx
+
+pip install openpyxl-image-loader
+ > SheetImageLoader
+ > openpyxl Image control
+
+pip install pandas
+ > pandas
+ > data analysis
