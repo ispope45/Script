@@ -31,7 +31,6 @@ if __name__ == "__main__":
         row = str(i)
         if image_load.image_in(f'O{row}'):
             key = load_ws[f'A{row}'].value
-            # print(type(key))
             val = image_load.get(f'O{row}')
             dic[key] = val
 
@@ -40,8 +39,8 @@ if __name__ == "__main__":
     for i in range(startRow, totalRows):
         row = str(i)
         if load_ws[f'A{row}'].value in dic:
-            img = openpyxl.drawing.image.Image(dic[load_ws[f'A{row}'].value])
-            img.anchor = f'P{row}'
+            img = openpyxl.drawing.image.Image(dic[load_ws[f'B{row}'].value])
+            img.anchor = f'U{row}'
             img.width = 65
             img.height = 65
             load_ws.add_image(img)
