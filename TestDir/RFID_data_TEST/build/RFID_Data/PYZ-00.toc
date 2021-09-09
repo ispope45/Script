@@ -1,0 +1,2 @@
+('D:\\Python\\Script\\TestDir\\RFID_data_TEST\\build\\RFID_Data\\PYZ-00.pyz',
+ [])

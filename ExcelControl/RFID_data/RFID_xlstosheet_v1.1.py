@@ -9,6 +9,7 @@ from xml.etree.ElementTree import parse
 from openpyxl_image_loader import SheetImageLoader
 from openpyxl.styles import Font
 from openpyxl.styles import Border, Side
+from openpyxl.styles import Alignment
 from shutil import copyfile
 
 START_DATE = date.today()
@@ -20,6 +21,8 @@ STYLE_BORDER = Border(left=Side(style='thin'),
                       top=Side(style='thin'),
                       bottom=Side(style='thin'))
 STYLE_FONT = Font(size=20)
+STYLE_ALIGN = Alignment(horizontal='left', vertical='top', wrap_text=True)
+
 CUR_PATH = os.getcwd()
 SRC_FILE = CUR_PATH + '\\raw.xls'
 SRC_FILE2 = CUR_PATH + '\\raw.xlsx'
@@ -83,6 +86,8 @@ def parse_xml(src_file, xmlroot, arg):
 
 if __name__ == "__main__":
 
+    sch_name = input("INPUT [학교명] : ")
+
     errChk = True
 
     if os.path.isfile(SRC_FILE):
@@ -93,8 +98,8 @@ if __name__ == "__main__":
         errChk = False
 
     if errChk:
-        sample_file = resource_path("sampleData.xlsx")
-        class_file = resource_path("classData.xml")
+        sample_file = resource_path("Data/sampledata210909.xlsx")
+        class_file = resource_path("Data/classData210909.xml")
         result_file = DST_PATH + "result.xlsx"
 
         if filename.find(".xlsx") == -1:
@@ -188,8 +193,10 @@ if __name__ == "__main__":
                 data.insert(10, '')
                 data.insert(15, '')
                 data.insert(16, '')
+                data.insert(17, '')
                 proc_ws.append(data)
-                proc_ws['B1'].value = title
+                proc_ws['C1'].value = sch_name
+                proc_ws['D1'].value = title
 
             for data in sortList:
                 # print(data)
@@ -199,13 +206,14 @@ if __name__ == "__main__":
                     for col in range(1, 22):
                         proc_ws.cell(row=row, column=col).font = STYLE_FONT
                         proc_ws.cell(row=row, column=col).border = STYLE_BORDER
+                        proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN
                         # print(f'{data[8]} / {str(col)} : {str(row)} ')
 
             for i in range(3, proc_ws.max_row + 1):
                 row = str(i)
                 if proc_ws[f'B{row}'].value in img_dict:
                     img = openpyxl.drawing.image.Image(img_dict[proc_ws[f'B{row}'].value])
-                    img.anchor = f'U{row}'
+                    img.anchor = f'V{row}'
                     img.width = 130
                     img.height = 130
                     proc_ws.add_image(img)
