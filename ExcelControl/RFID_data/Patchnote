@@ -1,5 +1,5 @@
 20210908
-    >beta
+    > beta
     > logging, progress bar 추가
 
 20210909
@@ -8,3 +8,11 @@
 20210909-2
     > Cell Align 수정
     > SampleExcel Format 수정
+
+20210914 / 2.10
+    > 에듀파인 데이터로 부터 시트 생성
+    > 공공API 활용 일일 1만건 한정
+    > xlsx 단일 지원(xls 지원X)
+
+20210914 / 2.11
+    > log 개선

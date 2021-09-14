@@ -203,7 +203,7 @@ if __name__ == "__main__":
                 # print(len(sortList))
                 for row in range(3, len(sortList) + 15):
                     proc_ws.row_dimensions[row].height = 100
-                    for col in range(1, 22):
+                    for col in range(1, 23):
                         proc_ws.cell(row=row, column=col).font = STYLE_FONT
                         proc_ws.cell(row=row, column=col).border = STYLE_BORDER
                         proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN

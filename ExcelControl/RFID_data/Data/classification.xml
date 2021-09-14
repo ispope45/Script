@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<classification>
+		<classname>물품분류명</classname>
+		<midclass>중분류</midclass>
+		<highclass>대분류</highclass>
+	</classification>
+	<classification>
+		<classname>물품분류명</classname>
+		<midclass>중분류</midclass>
+		<highclass>대분류</highclass>
+	</classification>
+</root>
