@@ -13,7 +13,7 @@ SRC_PATH = HOME_PATH + '\\Desktop\\src\\'
 DST_PATH = HOME_PATH + '\\Desktop\\dst\\'
 
 # SRC_FILE = SRC_PATH + 'Dev_List_20210706_PoE.xlsx'
-SRC_FILE = SRC_PATH + 'Dev_List_PoE.xlsx'
+SRC_FILE = SRC_PATH + 'Dev_PoE_List.xlsx'
 
 # test_ip = ['192.168.0.254', '192.168.0.253', '192.168.0.252', '192.168.0.251', '192.168.0.250']
 # test_port = [22, 80, 50005]
@@ -100,7 +100,7 @@ if __name__ == "__main__":
             ws['F' + row].value = "Not Connected"
 
         cnt = cnt + 1
-        if cnt == 1000:
+        if cnt == 2000:
             wb.save(filename=SRC_FILE)
             cnt = 0
 

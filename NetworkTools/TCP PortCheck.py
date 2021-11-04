@@ -13,7 +13,7 @@ SRC_PATH = HOME_PATH + '\\Desktop\\src\\'
 DST_PATH = HOME_PATH + '\\Desktop\\dst\\'
 
 # SRC_FILE = SRC_PATH + 'Dev_List_20210706_PoE.xlsx'
-SRC_FILE = SRC_PATH + 'Dev_List_2.xlsx'
+SRC_FILE = SRC_PATH + 'Dev_AP_List.xlsx'
 
 # test_ip = ['192.168.0.254', '192.168.0.253', '192.168.0.252', '192.168.0.251', '192.168.0.250']
 # test_port = [22, 80, 50005]
@@ -21,7 +21,7 @@ form_desc = '■ TCP Port Test\n' \
             'Read IP, Port number and TCP Port test\n' \
             'A:No(r) / B:Name(r) / C:IP(r) / D:Port(r) / E:Desc(w)\n'
 
-START_LINE = 96
+START_LINE = 0
 END_LINE = 0
 
 
@@ -79,23 +79,27 @@ if __name__ == "__main__":
         val_devName = ws['B' + row].value
         val_ip = ws['C' + row].value
         val_port = ws['D' + row].value
+        val_ck = ws['G' + row].value
         nowTime = time.time()
 
-        print(f"########### {i - 1} / {totalRows - 2} ########### Remain Time : {nowTime - startTime}")
-        if val_port == 'ICMP':
-            res = ping_check(val_ip)
+        if val_ck == "O":
+            continue
         else:
-            res = port_check(val_ip, val_port)
+            print(f"########### {i - 1} / {totalRows - 2} ########### Remain Time : {nowTime - startTime}")
+            if val_port == 'ICMP':
+                res = ping_check(val_ip)
+            else:
+                res = port_check(val_ip, val_port)
 
-        if res:
-            print(f"{val_devName} / {str(val_ip)}:{str(val_port)} Opened\n")
-            ws['E' + row].value = "Opened"
-        else:
-            print(f"{val_devName} / {str(val_ip)}:{str(val_port)} Not Connected\n")
-            ws['E' + row].value = "Not Connected"
+            if res:
+                print(f"{val_devName} / {str(val_ip)}:{str(val_port)} Opened\n")
+                ws['E' + row].value = "Opened"
+            else:
+                print(f"{val_devName} / {str(val_ip)}:{str(val_port)} Not Connected\n")
+                ws['E' + row].value = "Not Connected"
 
         cnt = cnt + 1
-        if cnt == 1000:
+        if cnt == 5000:
             wb.save(filename=SRC_FILE)
             cnt = 0
 

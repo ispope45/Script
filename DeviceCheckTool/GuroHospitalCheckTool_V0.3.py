@@ -2,6 +2,7 @@ import paramiko
 import time
 import win32com.client
 import os
+import telnetlib
 import csv
 
 
@@ -14,10 +15,12 @@ SRC_FILE = CUR_PATH + '\\Python_diag.xlsx'
 DST_PATH = CUR_PATH + '\\'
 
 
-def main(sw_ip, sw_user, sw_pass):
+def main(sw_ip, sw_user, sw_pass, sw_port, sw_proto):
     host = sw_ip
     username = sw_user
     password = sw_pass
+    port = sw_port
+    proto = sw_proto
 
     output = list()
     command = list()

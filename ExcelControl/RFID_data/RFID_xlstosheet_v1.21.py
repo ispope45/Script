@@ -52,48 +52,12 @@ def write_log(string):
     f.write(f'{string}\n')
     f.close()
 
-
-def convert_xls_to_xlsx(xls_file_path):
-    xlsBook = xlrd.open_workbook(xls_file_path)
-    workbook = openpyxl.Workbook()
-
-    for i in range(0, xlsBook.nsheets):
-        xlsSheet = xlsBook.sheet_by_index(i)
-        sheet = workbook.active if i == 0 else workbook.create_sheet()
-        sheet.title = xlsSheet.name
-
-        for row in range(0, xlsSheet.nrows):
-            for col in range(0, xlsSheet.ncols):
-                colvalue = xlsSheet.cell_value(row, col)
-                if isinstance(colvalue, str):
-                    colvalue = colvalue.replace('L', ' ', 3)
-
-                sheet.cell(row=row + 1, column=col + 1).value = colvalue
-    return workbook
-
-
-def parse_xml(src_file, xmlroot, arg):
-    tree = parse(src_file)
-    root = tree.getroot()
-    xml_root = root.findall(xmlroot)
-
-    xml_val = list()
-    for i in range(0, len(arg)):
-        xml_val.append([x.findtext(arg[i]) for x in xml_root])
-
-    return xml_val
-
-
 if __name__ == "__main__":
-
-    sch_name = input("INPUT [학교명] : ")
 
     errChk = True
 
     if os.path.isfile(SRC_FILE):
         filename = SRC_FILE
-    elif os.path.isfile(SRC_FILE2):
-        filename = SRC_FILE2
     else:
         errChk = False
 
@@ -102,19 +66,7 @@ if __name__ == "__main__":
         class_file = resource_path("Data/classData210909.xml")
         result_file = DST_PATH + "result.xlsx"
 
-        if filename.find(".xlsx") == -1:
-            try:
-                load_wb = convert_xls_to_xlsx(filename)
-            except Exception as e:
-                write_log(e)
-                b_filename = filename
-                a_filename = filename.replace(".xls", ".xlsx")
-                copyfile(b_filename, a_filename)
-                filename = a_filename
-                load_wb = openpyxl.load_workbook(filename, data_only=True)
-        else:
-            load_wb = openpyxl.load_workbook(filename, data_only=True)
-
+        load_wb = openpyxl.load_workbook(filename, data_only=True)
         load_ws = load_wb.active
 
         if START_LINE == 0:
@@ -126,42 +78,6 @@ if __name__ == "__main__":
             totalRows = load_ws.max_row + 1
         else:
             totalRows = END_LINE
-
-        # Image Load(Extract)
-        img_dict = {}
-        image_load = SheetImageLoader(load_ws)
-        for i in range(startRow, totalRows):
-            row = str(i)
-            if image_load.image_in(f'O{row}'):
-                key = load_ws[f'A{row}'].value
-                val = image_load.get(f'O{row}')
-                img_dict[key] = val
-
-        # Classification
-        xml_root = "classification"
-        xml_src = ["classname", "midclass", "highclass"]
-        parseData = parse_xml(class_file, xml_root, xml_src)
-
-        classname = parseData[0]
-        midclass = parseData[1]
-        highclass = parseData[2]
-
-        load_ws.insert_cols(2)
-        load_ws.insert_cols(2)
-        load_ws['B1'].value = "대분류"
-        load_ws['C1'].value = "중분류"
-
-        for i in range(startRow, totalRows):
-            row = str(i)
-            try:
-                idx = classname.index(load_ws['D' + row].value)
-
-                load_ws['B' + row].value = midclass[idx]
-                load_ws['C' + row].value = midclass[idx]
-            except Exception as e:
-                write_log(e)
-                load_ws['B' + row].value = "None"
-                load_ws['C' + row].value = "None"
 
         load_wb.save(resource_path("res.xlsx"))
         res_file = resource_path("res.xlsx")

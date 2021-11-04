@@ -3,11 +3,11 @@
 block_cipher = None
 
 
-a = Analysis(['RFID_formatting_V2.0.py'],
+a = Analysis(['RFID_formatting_V4.1.py'],
              pathex=['D:\Python\Script\ExcelControl\RFID_data'],
              binaries=[],
              datas=[('Data/classData210909.xml','./Data/'),
-             ('Data/sampledata210909.xlsx','./Data/')],
+             ('Data/sampledata211102.xlsx','./Data/')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -24,7 +24,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='RFID_data_v2.10',
+          name='RFID_data_v4.10',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,

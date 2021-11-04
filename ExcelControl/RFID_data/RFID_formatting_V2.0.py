@@ -28,7 +28,7 @@ STYLE_FONT = Font(size=20)
 STYLE_ALIGN = Alignment(horizontal='left', vertical='top', wrap_text=True)
 
 CUR_PATH = os.getcwd()
-SRC_FILE = CUR_PATH + '\\raw.xlsx'
+SRC_FILE = CUR_PATH + '\\raw44.xlsx'
 DST_PATH = CUR_PATH + '\\'
 
 
