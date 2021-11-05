@@ -148,6 +148,14 @@ if __name__ == "__main__":
     elif sort_key == 2:
         SORTING_KEY = "설치장소"
 
+    create_key = 0
+    while create_key not in [1, 2]:
+        create_key = int(input("출력파일 (1 or 2)\n"
+                               "1. 총괄 시트 파일\n"
+                               "2. 부서별 시트 파일\n"
+                               "Input Number : "))
+
+    create_sol = create_key
     errChk = True
     filename = "None"
     if os.path.isfile(SRC_FILE):
@@ -174,6 +182,8 @@ if __name__ == "__main__":
             endRows = raw_ws.max_row + 1
         else:
             endRows = END_LINE
+
+        # print(endRows)
 
         for i in range(1, endRows):
             row = str(i)
@@ -228,134 +238,23 @@ if __name__ == "__main__":
         res = sortData.drop_duplicates([SORTING_KEY])[SORTING_KEY].tolist()
 
         # Main Processing
+        if create_sol == 1:
+            # ### TotalData Creating
+            totalRes_wb = openpyxl.load_workbook(sample_file)
+            totalRes_ws = totalRes_wb.active
 
-        # ### TotalData Creating
-        totalRes_wb = openpyxl.load_workbook(sample_file)
-        totalRes_ws = totalRes_wb.active
-
-        proc_ws = totalRes_wb.copy_worksheet(totalRes_ws)
-        proc_ws.title = "총괄표"
-        cnt1 = 0
-
-        proc_ws['B1'].value = raw_ws['C1'].value
-        totalData = sortData.values.tolist()
-
-        # ### Empty Data Proc
-        for data in totalData:
-            if data[1] == None:
-                pass
-
-            else:
-                data.insert(10, '')
-                data.insert(11, '')
-                data.insert(12, '')
-                data.insert(13, '')
-                data.insert(18, '')
-                data.insert(19, '')
-                data.insert(20, '')
-                data.insert(25, '')
-                proc_ws.append(data)
-
-        # ### Product Expire Date
-        for j in range(3, proc_ws.max_row + 1):
-            row = str(j)
-            startUsageDate = proc_ws[f'G{row}'].value
-            usableDate = proc_ws[f'Q{row}'].value
-            prodDate = startUsageDate.split(".")
-
-            endUsableDateYear = int(prodDate[0]) + int(usableDate)
-            endUsableDateMonth = int(prodDate[1])
-            endUsableDateDay = int(prodDate[2])
-
-            dt = datetime.today()
-
-            if dt.year > endUsableDateYear:
-                resDate = True
-            else:
-                resDate = False
-                if (dt.year == endUsableDateYear) and (dt.month > endUsableDateMonth):
-                    resDate = True
-                else:
-                    resDate = False
-                    if (dt.year == endUsableDateYear) and (dt.month == endUsableDateMonth and dt.day > endUsableDateDay):
-                        resDate = True
-                    else:
-                        resDate = False
-
-            if resDate:
-                resDateData = "연수초과"
-            else:
-                resDateData = "연수남음"
-
-            proc_ws[f'X{row}'].value = f'{endUsableDateYear}.{endUsableDateMonth}.{endUsableDateDay}'
-            proc_ws[f'Y{row}'].value = resDateData
-
-        # ### Call G2B API for Image
-        for i in range(3, proc_ws.max_row + 1):
-            row = str(i)
-
-            prdCls = proc_ws['B' + row].value
-            if type(str()) == type(prdCls):
-                val = prdCls.split('-')[1]
-
-                if not os.path.isdir(resource_path("/img")):
-                    os.mkdir(resource_path("/img"))
-
-                if not os.path.isfile(resource_path(f"/img/{val}.jpg")):
-                    imgUrl, resVal = g2b_prd_call(val)
-                    if resVal:
-                        download(imgUrl, resource_path(f"/img/{val}.jpg"))
-
-                if os.path.isfile(resource_path(f"/img/{val}.jpg")):
-                    img = openpyxl.drawing.image.Image(resource_path(f"/img/{val}.jpg"))
-                    img.anchor = f'AA{row}'
-                    img.width = 65
-                    img.height = 65
-                    proc_ws.add_image(img)
-
-                printProgress(i, proc_ws.max_row, 'Progress:', 'Complete (1/2)', 1, 50)
-
-        # ### xlsx Template Apply
-        for data in totalData:
-            for row in range(3, len(totalData) + 15):
-                proc_ws.row_dimensions[row].height = 50
-                for col in range(1, 28):
-                    proc_ws.cell(row=row, column=col).font = STYLE_FONT
-                    proc_ws.cell(row=row, column=col).border = STYLE_BORDER
-                    proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN
-                    if col in [15, 16]:
-                        proc_ws.cell(row=row, column=col).number_format = numbers.BUILTIN_FORMATS[3]
-
-                    if col in [5, 6, 19, 26]:
-                        proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN_LEFT
-
-        # ### Each Sheet Processing
-        eachRes_wb = openpyxl.load_workbook(sample_file)
-        eachRes_ws = eachRes_wb.active
-        prog = 0
-
-        for ws in res:
-            if ws == '':
-                title = "NaN"
-                sortList = sortData[sortData[SORTING_KEY].isnull()].values.tolist()
-            elif str(type(ws)).find("str") != -1:
-                title = ws
-                sortList = sortData[sortData[SORTING_KEY] == ws].values.tolist()
-            else:
-                title = "NaN"
-                sortList = sortData[sortData[SORTING_KEY].isnull()].values.tolist()
-
-            proc_ws = eachRes_wb.copy_worksheet(eachRes_ws)
-            proc_ws.title = title
-            cnt = 0
+            proc_ws = totalRes_wb.copy_worksheet(totalRes_ws)
+            proc_ws.title = "총괄표"
+            cnt1 = 0
 
             proc_ws['B1'].value = raw_ws['C1'].value
-            proc_ws['E1'].value = title
+            totalData = sortData.values.tolist()
 
             # ### Empty Data Proc
-            for data in sortList:
+            for data in totalData:
                 if data[1] == None:
                     pass
+
                 else:
                     data.insert(10, '')
                     data.insert(11, '')
@@ -388,8 +287,7 @@ if __name__ == "__main__":
                         resDate = True
                     else:
                         resDate = False
-                        if (dt.year == endUsableDateYear) and (
-                                dt.month == endUsableDateMonth and dt.day > endUsableDateDay):
+                        if (dt.year == endUsableDateYear) and (dt.month == endUsableDateMonth and dt.day > endUsableDateDay):
                             resDate = True
                         else:
                             resDate = False
@@ -425,28 +323,154 @@ if __name__ == "__main__":
                         img.height = 65
                         proc_ws.add_image(img)
 
+                    printProgress(i, proc_ws.max_row, 'Progress:', 'Complete ', 1, 50)
+
+            ck1 = 1
+            ck2 = 1
             # ### xlsx Template Apply
-            for data in sortList:
-                for row in range(3, len(sortList) + 15):
-                    proc_ws.row_dimensions[row].height = 50
-                    for col in range(1, 28):
-                        proc_ws.cell(row=row, column=col).font = STYLE_FONT
-                        proc_ws.cell(row=row, column=col).border = STYLE_BORDER
-                        proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN
-                        if col in [15, 16]:
-                            proc_ws.cell(row=row, column=col).number_format = numbers.BUILTIN_FORMATS[3]
+            # print(len(totalData))
+            # for data in totalData:
+            #     print(len(data))
+            for row in range(3, len(totalData) + 15):
+                proc_ws.row_dimensions[row].height = 50
+                ck1 += 1
+                # print(f"ck1 : {str(ck1)} / {str(row)}")
+                for col in range(1, 28):
+                    ck2 += 1
+                    # print(f"ck2 : {str(ck2)}")
+                    proc_ws.cell(row=row, column=col).font = STYLE_FONT
+                    proc_ws.cell(row=row, column=col).border = STYLE_BORDER
+                    proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN
+                    if col in [15, 16]:
+                        proc_ws.cell(row=row, column=col).number_format = numbers.BUILTIN_FORMATS[3]
 
-                        if col in [5, 6, 19, 26]:
-                            proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN_LEFT
+                    if col in [5, 6, 19, 26]:
+                        proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN_LEFT
 
-            prog += 1
-            printProgress(prog, len(res), 'Progress:', 'Complete (2/2)', 1, 50)
+            totalRes_wb.remove(totalRes_wb['Sample'])
+            totalRes_wb.save(totalResult_file)
+            totalRes_wb.close()
+            # print("1. OK")
 
-        totalRes_wb.remove(totalRes_wb['Sample'])
-        totalRes_wb.save(totalResult_file)
+        elif create_sol == 2:
+            # ### Each Sheet Processing
+            eachRes_wb = openpyxl.load_workbook(sample_file)
+            eachRes_ws = eachRes_wb.active
+            prog = 0
 
-        eachRes_wb.remove(eachRes_wb['Sample'])
-        eachRes_wb.save(eachResult_file)
+            for ws in res:
+                if ws == '':
+                    title = "NaN"
+                    sortList = sortData[sortData[SORTING_KEY].isnull()].values.tolist()
+                elif str(type(ws)).find("str") != -1:
+                    title = ws
+                    sortList = sortData[sortData[SORTING_KEY] == ws].values.tolist()
+                else:
+                    title = "NaN"
+                    sortList = sortData[sortData[SORTING_KEY].isnull()].values.tolist()
+
+                proc_ws = eachRes_wb.copy_worksheet(eachRes_ws)
+                proc_ws.title = title
+                cnt = 0
+
+                proc_ws['B1'].value = raw_ws['C1'].value
+                proc_ws['E1'].value = title
+
+                # ### Empty Data Proc
+                for data in sortList:
+                    if data[1] == None:
+                        pass
+                    else:
+                        data.insert(10, '')
+                        data.insert(11, '')
+                        data.insert(12, '')
+                        data.insert(13, '')
+                        data.insert(18, '')
+                        data.insert(19, '')
+                        data.insert(20, '')
+                        data.insert(25, '')
+                        proc_ws.append(data)
+
+                # ### Product Expire Date
+                for j in range(3, proc_ws.max_row + 1):
+                    row = str(j)
+                    startUsageDate = proc_ws[f'G{row}'].value
+                    usableDate = proc_ws[f'Q{row}'].value
+                    prodDate = startUsageDate.split(".")
+
+                    endUsableDateYear = int(prodDate[0]) + int(usableDate)
+                    endUsableDateMonth = int(prodDate[1])
+                    endUsableDateDay = int(prodDate[2])
+
+                    dt = datetime.today()
+
+                    if dt.year > endUsableDateYear:
+                        resDate = True
+                    else:
+                        resDate = False
+                        if (dt.year == endUsableDateYear) and (dt.month > endUsableDateMonth):
+                            resDate = True
+                        else:
+                            resDate = False
+                            if (dt.year == endUsableDateYear) and (
+                                    dt.month == endUsableDateMonth and dt.day > endUsableDateDay):
+                                resDate = True
+                            else:
+                                resDate = False
+
+                    if resDate:
+                        resDateData = "연수초과"
+                    else:
+                        resDateData = "연수남음"
+
+                    proc_ws[f'X{row}'].value = f'{endUsableDateYear}.{endUsableDateMonth}.{endUsableDateDay}'
+                    proc_ws[f'Y{row}'].value = resDateData
+
+                # ### Call G2B API for Image
+                for i in range(3, proc_ws.max_row + 1):
+                    row = str(i)
+
+                    prdCls = proc_ws['B' + row].value
+                    if type(str()) == type(prdCls):
+                        val = prdCls.split('-')[1]
+
+                        if not os.path.isdir(resource_path("/img")):
+                            os.mkdir(resource_path("/img"))
+
+                        if not os.path.isfile(resource_path(f"/img/{val}.jpg")):
+                            imgUrl, resVal = g2b_prd_call(val)
+                            if resVal:
+                                download(imgUrl, resource_path(f"/img/{val}.jpg"))
+
+                        if os.path.isfile(resource_path(f"/img/{val}.jpg")):
+                            img = openpyxl.drawing.image.Image(resource_path(f"/img/{val}.jpg"))
+                            img.anchor = f'AA{row}'
+                            img.width = 65
+                            img.height = 65
+                            proc_ws.add_image(img)
+
+                # ### xlsx Template Apply
+                for data in sortList:
+                    for row in range(3, len(data) + 15):
+                        proc_ws.row_dimensions[row].height = 50
+                        for col in range(1, 28):
+                            proc_ws.cell(row=row, column=col).font = STYLE_FONT
+                            proc_ws.cell(row=row, column=col).border = STYLE_BORDER
+                            proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN
+                            if col in [15, 16]:
+                                proc_ws.cell(row=row, column=col).number_format = numbers.BUILTIN_FORMATS[3]
+
+                            if col in [5, 6, 19, 26]:
+                                proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN_LEFT
+
+                prog += 1
+                printProgress(prog, len(res), 'Progress:', 'Complete ', 1, 50)
+
+            eachRes_wb.remove(eachRes_wb['Sample'])
+            eachRes_wb.save(eachResult_file)
+            eachRes_wb.close()
+
+        # print("2. OK")
     else:
         print("Error:invalid Filename")
         write_log("Error:invalid Filename")
