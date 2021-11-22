@@ -450,18 +450,18 @@ if __name__ == "__main__":
                             proc_ws.add_image(img)
 
                 # ### xlsx Template Apply
-                for data in sortList:
-                    for row in range(3, len(data) + 15):
-                        proc_ws.row_dimensions[row].height = 50
-                        for col in range(1, 28):
-                            proc_ws.cell(row=row, column=col).font = STYLE_FONT
-                            proc_ws.cell(row=row, column=col).border = STYLE_BORDER
-                            proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN
-                            if col in [15, 16]:
-                                proc_ws.cell(row=row, column=col).number_format = numbers.BUILTIN_FORMATS[3]
+                # for data in sortList:
+                for row in range(3, proc_ws.max_row + 15):
+                    proc_ws.row_dimensions[row].height = 50
+                    for col in range(1, 28):
+                        proc_ws.cell(row=row, column=col).font = STYLE_FONT
+                        proc_ws.cell(row=row, column=col).border = STYLE_BORDER
+                        proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN
+                        if col in [15, 16]:
+                            proc_ws.cell(row=row, column=col).number_format = numbers.BUILTIN_FORMATS[3]
 
-                            if col in [5, 6, 19, 26]:
-                                proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN_LEFT
+                        if col in [5, 6, 19, 26]:
+                            proc_ws.cell(row=row, column=col).alignment = STYLE_ALIGN_LEFT
 
                 prog += 1
                 printProgress(prog, len(res), 'Progress:', 'Complete ', 1, 50)

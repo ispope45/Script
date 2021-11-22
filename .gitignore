@@ -1,2 +1,4 @@
-ExcelControl\RFID_data\dist\*
-ExcelControl\RFID_data\build\*
+ExcelControl\RFID_data\dist\*.exe
+ExcelControl\RFID_data\dist\*.zip
+ExcelControl\RFID_data\build\*.exe
+ExcelControl\RFID_data\build\*.zip

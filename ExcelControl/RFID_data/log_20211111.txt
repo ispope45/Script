@@ -1,0 +1,228 @@
+'벨트디스크샌더' is not in list
+'탁상드릴링머신' is not in list
+'제설함' is not in list
+'대형냉장고' is not in list
+'철도용와이어' is not in list
+'톱' is not in list
+'애자' is not in list
+'일산화탄소측정기' is not in list
+'대기오염측정기' is not in list
+'대기오염측정기' is not in list
+'대기오염측정기' is not in list
+'온냉치료용기기또는장치' is not in list
+'검진용의자또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'디지털펜' is not in list
+'도청방지기' is not in list
+'방재훈련용모의시스템' is not in list
+'우산빗물제거기' is not in list
+'우산빗물제거기' is not in list
+'상업용주방후드' is not in list
+'상업용주방후드' is not in list
+'상업용주방후드' is not in list
+'상업용주방후드' is not in list
+'상업용싱크대' is not in list
+'상업용싱크대' is not in list
+'상업용싱크대' is not in list
+'상업용싱크대' is not in list
+'개인주거용품자판기' is not in list
+'야구망또는담장' is not in list
+'높이뛰기및장대높이뛰기바' is not in list
+'운동용그물망' is not in list
+'운동기구운반차' is not in list
+'가정용칼갈이' is not in list
+'멀티미디어수신기' is not in list
+'매트리스' is not in list
+'매트리스' is not in list
+'매트리스' is not in list
+'발판' is not in list
+'종이보관장' is not in list
+'출석부보관장' is not in list
+'출석부보관장' is not in list
+'출석부보관장' is not in list
+'출석부보관장' is not in list
+'기타(Guitar)' is not in list
+'기타(Guitar)' is not in list
+None is not in list
+Error;404;;unknown url type: ''
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단e.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단e.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단a.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단a.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단s.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단s.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식3단e.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식3단s.jpg;HTTP Error 404: Not found
+
+Error;404;;unknown url type: ''
+
+Error;404;;unknown url type: ''
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2003/11/다목적점수판-1(1).gif;HTTP Error 404: Not found
+
+'벨트디스크샌더' is not in list
+'탁상드릴링머신' is not in list
+'제설함' is not in list
+'대형냉장고' is not in list
+'철도용와이어' is not in list
+'톱' is not in list
+'애자' is not in list
+'일산화탄소측정기' is not in list
+'대기오염측정기' is not in list
+'대기오염측정기' is not in list
+'대기오염측정기' is not in list
+'온냉치료용기기또는장치' is not in list
+'검진용의자또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'디지털펜' is not in list
+'도청방지기' is not in list
+'방재훈련용모의시스템' is not in list
+'우산빗물제거기' is not in list
+'우산빗물제거기' is not in list
+'상업용주방후드' is not in list
+'상업용주방후드' is not in list
+'상업용주방후드' is not in list
+'상업용주방후드' is not in list
+'상업용싱크대' is not in list
+'상업용싱크대' is not in list
+'상업용싱크대' is not in list
+'상업용싱크대' is not in list
+'개인주거용품자판기' is not in list
+'야구망또는담장' is not in list
+'높이뛰기및장대높이뛰기바' is not in list
+'운동용그물망' is not in list
+'운동기구운반차' is not in list
+'가정용칼갈이' is not in list
+'멀티미디어수신기' is not in list
+'매트리스' is not in list
+'매트리스' is not in list
+'매트리스' is not in list
+'발판' is not in list
+'종이보관장' is not in list
+'출석부보관장' is not in list
+'출석부보관장' is not in list
+'출석부보관장' is not in list
+'출석부보관장' is not in list
+'기타(Guitar)' is not in list
+'기타(Guitar)' is not in list
+None is not in list
+Error;404;;unknown url type: ''
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단e.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단e.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단a.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단a.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단s.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단s.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식3단e.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식3단s.jpg;HTTP Error 404: Not found
+
+Error;404;;unknown url type: ''
+
+Error;404;;unknown url type: ''
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2003/11/다목적점수판-1(1).gif;HTTP Error 404: Not found
+
+'벨트디스크샌더' is not in list
+'탁상드릴링머신' is not in list
+'제설함' is not in list
+'대형냉장고' is not in list
+'철도용와이어' is not in list
+'톱' is not in list
+'애자' is not in list
+'일산화탄소측정기' is not in list
+'대기오염측정기' is not in list
+'대기오염측정기' is not in list
+'대기오염측정기' is not in list
+'온냉치료용기기또는장치' is not in list
+'검진용의자또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'의료용카트또는액세서리' is not in list
+'디지털펜' is not in list
+'도청방지기' is not in list
+'방재훈련용모의시스템' is not in list
+'우산빗물제거기' is not in list
+'우산빗물제거기' is not in list
+'상업용주방후드' is not in list
+'상업용주방후드' is not in list
+'상업용주방후드' is not in list
+'상업용주방후드' is not in list
+'상업용싱크대' is not in list
+'상업용싱크대' is not in list
+'상업용싱크대' is not in list
+'상업용싱크대' is not in list
+'개인주거용품자판기' is not in list
+'야구망또는담장' is not in list
+'높이뛰기및장대높이뛰기바' is not in list
+'운동용그물망' is not in list
+'운동기구운반차' is not in list
+'가정용칼갈이' is not in list
+'멀티미디어수신기' is not in list
+'매트리스' is not in list
+'매트리스' is not in list
+'매트리스' is not in list
+'발판' is not in list
+'종이보관장' is not in list
+'출석부보관장' is not in list
+'출석부보관장' is not in list
+'출석부보관장' is not in list
+'출석부보관장' is not in list
+'기타(Guitar)' is not in list
+'기타(Guitar)' is not in list
+None is not in list
+Error;404;;unknown url type: ''
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단e.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단e.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단a.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단a.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단s.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식6단s.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식3단e.jpg;HTTP Error 404: Not found
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2006/06/책선반복식3단s.jpg;HTTP Error 404: Not found
+
+Error;404;;unknown url type: ''
+
+Error;404;;unknown url type: ''
+
+Error;404;http://img.g2b.go.kr:7070/Resource/CataAttach/XezCatalog/XZMOK/item_image/2003/11/다목적점수판-1(1).gif;HTTP Error 404: Not found
+
