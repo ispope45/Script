@@ -1,2 +1,0 @@
-('D:\\Python\\Script\\ExcelControl\\RFID_data\\build\\RFID_Data\\PYZ-00.pyz',
- [])
