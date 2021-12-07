@@ -15,7 +15,7 @@ proxy = {'https': 'http://127.0.0.1:8080'}
 login_data = {'disconnectType': '',
               'webDeviceForceLogin': '',
               'force': 'false',
-              'userId': 'admin',
+              'userId': 'manager',
               'password': 'qwe123!@#',
               'language': 0}
 CUR_PATH = os.getcwd()
