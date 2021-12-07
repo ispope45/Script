@@ -186,74 +186,74 @@ with requests.Session() as s:
             print(res.text)
 
         # Interface Setting
-        for col in range(0, len(IP_COL)):
-            if IP_COL[col] == 'M':
-                primary = 0
-                idx = 1
-            else:
-                primary = 1
-                idx = 0
-
-            if IP_COL[col] in ['O', 'Q']:
-                zone = 2
-            else:
-                zone = 1
-
-            if_config.append([
-                ws[f'C{str(row)}'].value,
-                ws[IP_COL[col] + str(row)].value,
-                ws[NETMASK_COL[col] + str(row)].value,
-                IF_NUM[col],
-                primary,
-                zone,
-                idx]
-            )
-
-            if IP_COL[col] != 'O' :
-                if_config.append([
-                    ws[f'C{str(row + 1)}'].value,
-                    ws[IP_COL[col] + str(row + 1)].value,
-                    ws[NETMASK_COL[col] + str(row + 1)].value,
-                    IF_NUM[col],
-                    primary,
-                    zone,
-                    idx]
-                )
-
-        print(if_config)
-        for val in if_config:
-            API1, API2, API3, API4, if_cfg1, if_cfg2 = \
-                make_if_config(val[0], val[1], val[2], val[3], val[4], val[5], "163814914152635", val[6])
-            with s.get(MAIN_URL + API3, proxies=proxy, headers=headers, verify=False) as res:
-                print(res.text)
-                var = res.json()
-                print(type(if_cfg2['mode']['ipv4']['address'][0]['id']))
-                print(if_cfg2['mode']['ipv4']['address'][0]['id'])
-                if len(var['result']['mode']['ipv4']['address']) < 2:
-                    if_cfg2['mode']['ipv4']['address'][0]['id'] = var['result']['mode']['ipv4']['address'][0]['id']
-                    API1 += str(var['result']['mode']['ipv4']['address'][0]['id'])
-                else:
-                    if_cfg2['mode']['ipv4']['address'][0]['id'] = var['result']['mode']['ipv4']['address'][1]['id']
-                    API1 += str(var['result']['mode']['ipv4']['address'][1]['id'])
-
-                print(type(idx))
-
-            with s.put(MAIN_URL + API1, json=if_cfg1, proxies=proxy, headers=headers, verify=False) as res:
-                print(res.text)
-                # val = res.json()
-                # print(type(if_cfg2['mode']['ipv4']['address'][0]['id']))
-                # print(if_cfg2['mode']['ipv4']['address'][0]['id'])
-                # if_cfg2['mode']['ipv4']['address'][0]['id'] = val['result']['id']
-                # print(type(idx))
-
-            with s.get(MAIN_URL + API2, proxies=proxy, headers=headers, verify=False) as res:
-                print(res.text)
-
-            with s.put(MAIN_URL + API3, json=if_cfg2, proxies=proxy, headers=headers, verify=False) as res:
-                print(res.text)
-
-            with s.put(MAIN_URL + API4, proxies=proxy, headers=headers, verify=False) as res:
-                print(res.text)
+        # for col in range(0, len(IP_COL)):
+        #     if IP_COL[col] == 'M':
+        #         primary = 0
+        #         idx = 1
+        #     else:
+        #         primary = 1
+        #         idx = 0
+        #
+        #     if IP_COL[col] in ['O', 'Q']:
+        #         zone = 2
+        #     else:
+        #         zone = 1
+        #
+        #     if_config.append([
+        #         ws[f'C{str(row)}'].value,
+        #         ws[IP_COL[col] + str(row)].value,
+        #         ws[NETMASK_COL[col] + str(row)].value,
+        #         IF_NUM[col],
+        #         primary,
+        #         zone,
+        #         idx]
+        #     )
+        #
+        #     if IP_COL[col] != 'O' :
+        #         if_config.append([
+        #             ws[f'C{str(row + 1)}'].value,
+        #             ws[IP_COL[col] + str(row + 1)].value,
+        #             ws[NETMASK_COL[col] + str(row + 1)].value,
+        #             IF_NUM[col],
+        #             primary,
+        #             zone,
+        #             idx]
+        #         )
+        #
+        # print(if_config)
+        # for val in if_config:
+        #     API1, API2, API3, API4, if_cfg1, if_cfg2 = \
+        #         make_if_config(val[0], val[1], val[2], val[3], val[4], val[5], "163814914152635", val[6])
+        #     with s.get(MAIN_URL + API3, proxies=proxy, headers=headers, verify=False) as res:
+        #         print(res.text)
+        #         var = res.json()
+        #         print(type(if_cfg2['mode']['ipv4']['address'][0]['id']))
+        #         print(if_cfg2['mode']['ipv4']['address'][0]['id'])
+        #         if len(var['result']['mode']['ipv4']['address']) < 2:
+        #             if_cfg2['mode']['ipv4']['address'][0]['id'] = var['result']['mode']['ipv4']['address'][0]['id']
+        #             API1 += str(var['result']['mode']['ipv4']['address'][0]['id'])
+        #         else:
+        #             if_cfg2['mode']['ipv4']['address'][0]['id'] = var['result']['mode']['ipv4']['address'][1]['id']
+        #             API1 += str(var['result']['mode']['ipv4']['address'][1]['id'])
+        #
+        #         print(type(idx))
+        #
+        #     with s.put(MAIN_URL + API1, json=if_cfg1, proxies=proxy, headers=headers, verify=False) as res:
+        #         print(res.text)
+        #         # val = res.json()
+        #         # print(type(if_cfg2['mode']['ipv4']['address'][0]['id']))
+        #         # print(if_cfg2['mode']['ipv4']['address'][0]['id'])
+        #         # if_cfg2['mode']['ipv4']['address'][0]['id'] = val['result']['id']
+        #         # print(type(idx))
+        #
+        #     with s.get(MAIN_URL + API2, proxies=proxy, headers=headers, verify=False) as res:
+        #         print(res.text)
+        #
+        #     with s.put(MAIN_URL + API3, json=if_cfg2, proxies=proxy, headers=headers, verify=False) as res:
+        #         print(res.text)
+        #
+        #     with s.put(MAIN_URL + API4, proxies=proxy, headers=headers, verify=False) as res:
+        #         print(res.text)
 
         # Virtual IP Setting
 
