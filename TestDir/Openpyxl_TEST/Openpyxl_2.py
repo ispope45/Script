@@ -49,9 +49,6 @@ for row in ws.iter_rows():
             continue
 
 
-
-
-
 wb.save(filename="C:\\Users\\Jungly\\Desktop\\2.xlsx")
 
 wb.close()

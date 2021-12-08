@@ -4,7 +4,10 @@ import base64
 import binascii
 import hashlib
 import openpyxl
+import urllib3
 import os
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 MAIN_URL = "https://192.168.0.254:50005/"
 LOGIN_API = "login/loginAction"

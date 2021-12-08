@@ -4,7 +4,12 @@ import os
 import sys
 import paramiko
 import time
+import urllib3
+from datetime import date
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+START_DATE = date.today()
 MAIN_URL = "https://192.168.0.254:50005/"
 LOGIN_API = "login/loginAction"
 BACKUP_API = "firewall/firewall/ipv4Policy/list?json=true&exportAction=true&queryString=&"
@@ -85,7 +90,15 @@ def wait_streams(channel):
     return out_data, err_data
 
 
+def write_log(string):
+    dat = str(START_DATE).replace("-", "")
+    f = open(SRC_DIR + f'log_{dat}.txt', "a+")
+    f.write(f'{string}\n')
+    f.close()
+
+
 if __name__ == "__main__":
+    print("Preparing TG Backup Tool....")
     wb = openpyxl.load_workbook(SRC_DIR + SRC_FILE)
     ws = wb.active
 
@@ -109,10 +122,13 @@ if __name__ == "__main__":
 
         with requests.Session() as s:
             with s.post(MAIN_URL + LOGIN_API, data=login_data, verify=False) as res:
-                print(res.status_code)
+                write_log(f"{no}_{name}; {MAIN_URL + LOGIN_API}; {res.status_code}; ")
 
             with s.get(MAIN_URL + BACKUP_API2, verify=False) as res:
-                print(res.status_code)
+                write_log(f"{no}_{name}; {MAIN_URL + BACKUP_API2}; {res.status_code}; 2.7.1")
+                if len(res.text) < 1:
+                    with s.get(MAIN_URL + BACKUP_API, verify=False) as res:
+                        write_log(f"{no}_{name}; {MAIN_URL + BACKUP_API}; {res.status_code}; 2.7.1 later")
 
                 result = res.text.replace("\n\n", "\n")
 
@@ -126,8 +142,8 @@ if __name__ == "__main__":
                 f2 = open(SRC_DIR + f"{no}_{org}_{name}.csv", 'w', newline='')
                 f2.write(result)
                 f2.close()
-        s.close()
 
+        s.close()
         printProgress(row, ws.max_row, 'Progress:', 'Complete ', 1, 50)
     wb.close()
     os.system("pause")
