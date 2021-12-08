@@ -8,16 +8,8 @@ import time
 MAIN_URL = "https://192.168.0.254:50005/"
 LOGIN_API = "login/loginAction"
 BACKUP_API = "firewall/firewall/ipv4Policy/list?json=true&exportAction=true&queryString=&"
+BACKUP_API2 = "firewall/firewall/ipv4Policy/exportAction?profileId=&"
 
-USERID = "manager"
-USERPASS = "qwe123!@#"
-
-login_data = {'disconnectType': '',
-              'webDeviceForceLogin': '',
-              'force': 'false',
-              'userId': USERID,
-              'password': USERPASS,
-              'language': 0}
 CUR_PATH = os.getcwd()
 SRC_DIR = CUR_PATH + "\\"
 SRC_FILE = "form.xlsx"
@@ -74,7 +66,7 @@ def send(channel, cmd):
     channel.send(cmd)
     out_data, err_data = wait_streams(channel)
     a = out_data.replace("\\r\\n", "\n").replace("\\r", "")
-    b = a.replace('b"', "").replace("b'", "").replace('"', "")
+    b = a.replace('b"', "").replace("b'", "").replace('"', "").replace('\\', "")
     return b
 
 
@@ -103,14 +95,25 @@ if __name__ == "__main__":
         name = ws[f'C{row}'].value
         utmIp = ws[f'D{row}'].value
 
+        USERID = ws[f'E{row}'].value
+        USERPASS = ws[f'F{row}'].value
+
+        login_data = {'disconnectType': '',
+                      'webDeviceForceLogin': '',
+                      'force': 'false',
+                      'userId': USERID,
+                      'password': USERPASS,
+                      'language': 0}
+
         MAIN_URL = f"https://{utmIp}:50005/"
 
         with requests.Session() as s:
             with s.post(MAIN_URL + LOGIN_API, data=login_data, verify=False) as res:
                 print(res.status_code)
 
-            with s.get(MAIN_URL + BACKUP_API, verify=False) as res:
+            with s.get(MAIN_URL + BACKUP_API2, verify=False) as res:
                 print(res.status_code)
+
                 result = res.text.replace("\n\n", "\n")
 
                 res = main(utmIp, USERID, USERPASS, 22, cmd1)
