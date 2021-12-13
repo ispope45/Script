@@ -31,65 +31,6 @@ def printProgress(iteration, total, prefix='', suffix='', decimals=1, barLength=
     sys.stdout.flush()
 
 
-cmd1 = ['show_all\n']
-
-
-def main(sw_ip, sw_user, sw_pass, sw_port, command):
-    host = sw_ip
-    username = sw_user
-    password = sw_pass
-
-    output = list()
-    try:
-        conn = paramiko.SSHClient()
-        conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        conn.connect(host, username=username, password=password, port=sw_port, timeout=100)
-        channel = conn.invoke_shell()
-        time.sleep(3)
-
-        for line in command:
-            res = ""
-            res += send(channel, line)
-            output.append(res)
-
-        return output
-
-    except Exception as e:
-        if "port" in str(e):
-            return "Port Error"
-        if "WinError 10060" in str(e):
-            return "Connection Error"
-        print(e)
-        return "Error"
-
-    finally:
-        if conn is not None:
-            conn.close()
-
-
-def send(channel, cmd):
-    channel.send(cmd)
-    out_data, err_data = wait_streams(channel)
-    a = out_data.replace("\\r\\n", "\n").replace("\\r", "")
-    b = a.replace('b"', "").replace("b'", "").replace('"', "").replace('\\', "")
-    return b
-
-
-def wait_streams(channel):
-    time.sleep(1)
-    out_data = ""
-    err_data = ""
-    while True:
-        time.sleep(1)
-        if channel.recv_ready():
-            out_data += str(channel.recv(100000))
-            if channel.recv_stderr_ready():
-                err_data += str(channel.recv(100000))
-            break
-
-    return out_data, err_data
-
-
 def write_log(string):
     dat = str(START_DATE).replace("-", "")
     f = open(SRC_DIR + f'log_{dat}.txt', "a+")
@@ -131,13 +72,6 @@ if __name__ == "__main__":
                         write_log(f"{no}_{name}; {MAIN_URL + BACKUP_API}; {res.status_code}; 2.7.1 later")
 
                 result = res.text.replace("\n\n", "\n")
-                #
-                # res = main(utmIp, USERID, USERPASS, 22, cmd1)
-                #
-                # f1 = open(SRC_DIR + f"{no}_{org}_{name}.txt", "w")
-                # for val in res:
-                #     f1.write(val)
-                # f1.close()
 
                 f2 = open(SRC_DIR + f"{no}_{org}_{name}.csv", 'w', newline='')
                 f2.write(result)
