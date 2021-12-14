@@ -45,8 +45,10 @@ if __name__ == "__main__":
         dstList = []
         svcList = []
 
+        # print(totalValue)
         for val in totalValue:
             proc_ws.append(val)
+            print(val)
 
         for row in range(2, proc_ws.max_row + 1):
             # print(row)
@@ -91,6 +93,25 @@ if __name__ == "__main__":
         res_ws_row = 4
 
         for pol in polItem:
+            print(pol)
+
+            '''
+            [3.0, 'Yes', 'Deny', 'No', 
+                [
+                    ['34.78.211.173', '34.78.211.173/32'], 
+                    ['94.99.216.4', '94.99.216.4/32'],
+                    ['192.168.0.0/24', '192.168.0.0/24']
+                ],
+                [
+                    ['192.168.0.0/24', '192.168.0.0/24'], 
+                    ['all', '0.0.0.0/0']
+                ],
+                [
+                    ['Sharing_TCP_file', 'tcp 1-65535 137-139']
+                ]
+            ]
+            '''
+
             ruleCnt = []
             ruleCnt.append(len(pol[4]))
             ruleCnt.append(len(pol[5]))
@@ -116,6 +137,14 @@ if __name__ == "__main__":
                 res_ws[f'J{row}'].value = src[0]
                 srcCk = src[1].split('/')
 
+                ipOctet = srcCk[0].split('.')
+                if int(ipOctet[0]) == 10:
+                    res_ws[f'F{row}'].value = 1
+                    if int(ipOctet[1]) % 10 == 7:
+                        res_ws[f'F{row}'].value = 2
+                else:
+                    res_ws[f'F{row}'].value = 2
+
                 if srcCk[0].find("-") != -1:
                     res_ws[f'I{row}'].value = 'N'
                     res_ws[f'K{row}'].value = srcCk[0]
@@ -127,7 +156,7 @@ if __name__ == "__main__":
                     res_ws[f'K{row}'].value = srcCk[0]
 
                 row += 1
-                print(src)
+                # print(src)
 
             row = res_ws_row
             for dst in pol[5]:
@@ -136,6 +165,14 @@ if __name__ == "__main__":
 
                 res_ws[f'P{row}'].value = dst[0]
                 dstCk = dst[1].split('/')
+
+                ipOctet = dstCk[0].split('.')
+                if int(ipOctet[0]) == 10:
+                    res_ws[f'L{row}'].value = 1
+                    if int(ipOctet[1]) % 10 == 7:
+                        res_ws[f'L{row}'].value = 2
+                else:
+                    res_ws[f'L{row}'].value = 2
 
                 if dstCk[0].find("-") != -1:
                     res_ws[f'O{row}'].value = 'N'
@@ -148,14 +185,14 @@ if __name__ == "__main__":
                     res_ws[f'Q{row}'].value = dstCk[0]
 
                 row += 1
-                print(dst)
+                # print(dst)
 
             row = res_ws_row
             for svc in pol[6]:
                 if svc[0] == 'all':
                     continue
 
-                print(svc)
+                # print(svc)
                 res_ws[f'S{row}'].value = svc[0]
                 svcVal = svc[1].split(' ')
                 res_ws[f'T{row}'].value = svcVal[0]

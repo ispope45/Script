@@ -17,7 +17,7 @@ BACKUP_API2 = "firewall/firewall/ipv4Policy/exportAction?profileId=&"
 
 CUR_PATH = os.getcwd()
 SRC_DIR = CUR_PATH + "\\"
-SRC_FILE = "form.xlsx"
+SRC_FILE = "Form1.xlsx"
 
 
 def printProgress(iteration, total, prefix='', suffix='', decimals=1, barLength=100):
