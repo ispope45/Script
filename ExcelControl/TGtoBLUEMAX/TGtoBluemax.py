@@ -3,6 +3,9 @@ import os
 import sys
 import pandas as pd
 import numpy as np
+from datetime import date
+
+START_DATE = date.today()
 
 SRC_DIR = os.getcwd() + "//"
 DST_FILE = SRC_DIR + "result.xlsx"
@@ -18,32 +21,58 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
+def printProgress(iteration, total, prefix='', suffix='', decimals=1, barLength=100):
+    formatStr = "{0:." + str(decimals) + "f}"
+    percent = formatStr.format(100 * (iteration / float(total)))
+    filledLength = int(round(barLength * iteration / float(total)))
+    bar = '#' * filledLength + '-' * (barLength - filledLength)
+    sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percent, '%', suffix)),
+    if iteration == total:
+        sys.stdout.write('\n')
+    sys.stdout.flush()
+
+
+def write_log(string):
+    dat = str(START_DATE).replace("-", "")
+    f = open(SRC_DIR + f'log_{dat}.txt', "a+")
+    f.write(f'{string}\n')
+    f.close()
+
+
 if __name__ == "__main__":
-
+    print("Preparing TG to Bluemax Migration Tool....")
     fileList = os.listdir(SRC_DIR)
-    res_wb = openpyxl.load_workbook(resource_path(SAMPLE_FILE))
-    res_ws = res_wb.active
 
+    prog = 0
     for f in fileList:
         if f.find(".csv") == -1:
             continue
 
+        res_wb = openpyxl.load_workbook(resource_path(SAMPLE_FILE))
+        res_ws = res_wb.active
+
         proc_wb = openpyxl.Workbook()
         proc_ws = proc_wb.active
         proc_ws.append(COL_LIST)
+        try:
+            fileNo = f.split("_")[0]
+            fileOrg = f.split("_")[1]
+            fileSch = f.split("_")[2].split(".")[0]
 
-        fileNo = f.split("_")[0]
-        fileOrg = f.split("_")[1]
-        fileSch = f.split("_")[2].split(".")[0]
+            data = pd.read_csv(SRC_DIR + f)
+            p_data = data[COL_LIST]
+            totalValue = p_data.values.tolist()
+        except Exception as e:
+            write_log(f'{f};{e}')
+            continue
 
-        data = pd.read_csv(SRC_DIR + f)
-        p_data = data[COL_LIST]
-        totalValue = p_data.values.tolist()
         polItem = []
         ruleList = []
         srcList = []
         dstList = []
         svcList = []
+        reversibleCnt = 0
+        ruleCount = 1
 
         # print(totalValue)
         for val in totalValue:
@@ -51,20 +80,12 @@ if __name__ == "__main__":
             print(val)
 
         for row in range(2, proc_ws.max_row + 1):
-            # print(row)
-            # print(proc_ws[f'A{row}'].value)
-            # print(type(proc_ws[f'A{row}'].value))
+
             if not(pd.isna(proc_ws[f'A{row}'].value)):
-                ruleList.append(proc_ws[f'A{row}'].value)
-                # print("OK")
-
-            if not(pd.isna(proc_ws[f'B{row}'].value)):
+                ruleList.append(ruleCount)
+                ruleCount += 1
                 ruleList.append(proc_ws[f'B{row}'].value)
-
-            if not(pd.isna(proc_ws[f'I{row}'].value)):
                 ruleList.append(proc_ws[f'I{row}'].value)
-
-            if not(pd.isna(proc_ws[f'J{row}'].value)):
                 ruleList.append(proc_ws[f'J{row}'].value)
 
             if not(pd.isna(proc_ws[f'C{row}'].value)):
@@ -76,21 +97,43 @@ if __name__ == "__main__":
             if not(pd.isna(proc_ws[f'G{row}'].value)):
                 svcList.append([proc_ws[f'G{row}'].value, proc_ws[f'H{row}'].value])
 
-            if not(pd.isna(proc_ws[f'A{row}'].value)):
+            if not(pd.isna(proc_ws[f'A{row + 1}'].value)):
                 ruleList.append(srcList)
                 ruleList.append(dstList)
                 ruleList.append(svcList)
                 polItem.append(ruleList)
 
+                if ruleList[3] == 'Yes':
+                    ruleList = []
+                    ruleList.append(ruleCount)
+                    ruleCount += 1
+                    ruleList.append(polItem[-1][1])
+                    ruleList.append(polItem[-1][2])
+                    ruleList.append(polItem[-1][3])
+
+                    ruleList.append(dstList)
+                    ruleList.append(srcList)
+                    ruleList.append(svcList)
+                    polItem.append(ruleList)
                 ruleList = []
                 srcList = []
                 dstList = []
                 svcList = []
 
+        ruleList.append(srcList)
+        ruleList.append(dstList)
+        ruleList.append(svcList)
+        polItem.append(ruleList)
+        ruleList = []
+        srcList = []
+        dstList = []
+        svcList = []
+
         # print(polItem)
         # print(len(polItem))
 
         res_ws_row = 4
+        print(polItem)
 
         for pol in polItem:
             print(pol)
@@ -140,7 +183,7 @@ if __name__ == "__main__":
                 ipOctet = srcCk[0].split('.')
                 if int(ipOctet[0]) == 10:
                     res_ws[f'F{row}'].value = 1
-                    if int(ipOctet[1]) % 10 == 7:
+                    if int(ipOctet[1]) % 10 > 6:
                         res_ws[f'F{row}'].value = 2
                 else:
                     res_ws[f'F{row}'].value = 2
@@ -148,7 +191,7 @@ if __name__ == "__main__":
                 if srcCk[0].find("-") != -1:
                     res_ws[f'I{row}'].value = 'N'
                     res_ws[f'K{row}'].value = srcCk[0]
-                elif int(srcCk[1]) > 32:
+                elif int(srcCk[1]) < 32:
                     res_ws[f'I{row}'].value = 'N'
                     res_ws[f'K{row}'].value = f'{srcCk[0]}/{srcCk[1]}'
                 else:
@@ -169,7 +212,7 @@ if __name__ == "__main__":
                 ipOctet = dstCk[0].split('.')
                 if int(ipOctet[0]) == 10:
                     res_ws[f'L{row}'].value = 1
-                    if int(ipOctet[1]) % 10 == 7:
+                    if int(ipOctet[1]) % 10 > 6:
                         res_ws[f'L{row}'].value = 2
                 else:
                     res_ws[f'L{row}'].value = 2
@@ -177,7 +220,7 @@ if __name__ == "__main__":
                 if dstCk[0].find("-") != -1:
                     res_ws[f'O{row}'].value = 'N'
                     res_ws[f'Q{row}'].value = dstCk[0]
-                elif int(dstCk[1]) > 32:
+                elif int(dstCk[1]) < 32:
                     res_ws[f'O{row}'].value = 'N'
                     res_ws[f'Q{row}'].value = f'{dstCk[0]}/{dstCk[1]}'
                 else:
@@ -207,7 +250,11 @@ if __name__ == "__main__":
 
             res_ws_row += max(ruleCnt)
 
-        res_wb.save(SRC_DIR + "result2.xlsx")
+        prog += 1
+        printProgress(prog, len(fileList), 'Progress:', 'Complete ', 1, 50)
+        res_wb.save(SRC_DIR + f"{fileNo}_{fileOrg}_{fileSch}_BLM.xlsx")
+        proc_wb.close()
+        res_wb.close()
 
 
 

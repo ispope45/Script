@@ -39,6 +39,7 @@ if __name__ == "__main__":
     ws = wb.active
     ws.append(COL_LIST1 + COL_LIST2)
 
+    prog = 0
     for f in fileList:
         if f.find(".csv") == -1:
             continue
@@ -60,5 +61,7 @@ if __name__ == "__main__":
         for i in totalValue:
             ws.append(i)
             # print(i)
+        prog += 1
+        printProgress(prog, len(fileList), 'Progress:', 'Complete ', 1, 50)
 
     wb.save(DST_FILE)
