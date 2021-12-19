@@ -28,7 +28,7 @@ DHCP_API3 = '/api/sm/dhcp/server/apply'
 BACKUP_PARAM = {"ha_backup": 1, "target": "POVS"}
 
 CUR_PATH = os.getcwd()
-SRC_FILE = CUR_PATH + "\\test.xlsx"
+SRC_FILE = CUR_PATH + "\\src.xlsx"
 START_DATE = date.today()
 
 
@@ -280,74 +280,74 @@ if __name__ == "__main__":
 
         with requests.Session() as s:
             # WEB GUI Initialize
-            with s.get(MAIN_URL, verify=False) as res:
-                val = res.text
-                find_num = val.find("csrf_token")
-                csrf_token = val[find_num + 51:find_num + 115]
-                pw = "secui00@!"
-                iv = Random.new().read(AES.block_size)
-
-                key = bytes(csrf_token[:32], 'utf-8')
-                raw = bytes(_pad(pw), 'utf-8')
-                cipher = AES.new(key, AES.MODE_CBC, iv)
-                hex_data = (iv.hex() + cipher.encrypt(raw).hex()).encode('utf-8')
-                login_pw = base64.b64encode(hex_data).decode('utf-8')
-
-                login_data = make_login_data(login_pw, csrf_token)
-
-            # Login Phase
-            with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False) as res:
-                cookies = res.cookies.get_dict()
-                res_dict = json.loads(res.text)
-                auth_key = res_dict['result']['api_token']
-                headers = {'Authorization': auth_key}
-
-            # VIP Delete
-            for j in range(0, vip_delCnt):
-                with s.delete(MAIN_URL + VIP_API + '/' + str(j + 1), headers=headers,
-                              verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            s.close()
-
-            # INTERFACE & HOSTNAME Setting
-            ssh = SSHConnector()
-            th1 = Process(target=ssh.ssh_connect, args=(con_info[0], ifCfg_M))
-
-            ssh2 = SSHConnector()
-            th2 = Process(target=ssh2.ssh_connect, args=(con_info[1], ifCfg_S))
-
-            th1.start()
-            th2.start()
-            th1.join()
-            th2.join()
-
-        with requests.Session() as s:
-            # WEB GUI Initialize
-            with s.get(MAIN_URL, verify=False) as res:
-                val = res.text
-                find_num = val.find("csrf_token")
-                csrf_token = val[find_num + 51:find_num + 115]
-                pw = "secui00@!"
-                iv = Random.new().read(AES.block_size)
-
-                key = bytes(csrf_token[:32], 'utf-8')
-                raw = bytes(_pad(pw), 'utf-8')
-                cipher = AES.new(key, AES.MODE_CBC, iv)
-                hex_data = (iv.hex() + cipher.encrypt(raw).hex()).encode('utf-8')
-                login_pw = base64.b64encode(hex_data).decode('utf-8')
-
-                login_data = make_login_data(login_pw, csrf_token)
-
-            # Login Phase
-            with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False) as res:
-                cookies = res.cookies.get_dict()
-                res_dict = json.loads(res.text)
-                auth_key = res_dict['result']['api_token']
-                headers = {'Authorization': auth_key}
+        #     with s.get(MAIN_URL, verify=False) as res:
+        #         val = res.text
+        #         find_num = val.find("csrf_token")
+        #         csrf_token = val[find_num + 51:find_num + 115]
+        #         pw = "secui00@!"
+        #         iv = Random.new().read(AES.block_size)
+        #
+        #         key = bytes(csrf_token[:32], 'utf-8')
+        #         raw = bytes(_pad(pw), 'utf-8')
+        #         cipher = AES.new(key, AES.MODE_CBC, iv)
+        #         hex_data = (iv.hex() + cipher.encrypt(raw).hex()).encode('utf-8')
+        #         login_pw = base64.b64encode(hex_data).decode('utf-8')
+        #
+        #         login_data = make_login_data(login_pw, csrf_token)
+        #
+        #     # Login Phase
+        #     with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False) as res:
+        #         cookies = res.cookies.get_dict()
+        #         res_dict = json.loads(res.text)
+        #         auth_key = res_dict['result']['api_token']
+        #         headers = {'Authorization': auth_key}
+        #
+        #     # VIP Delete
+        #     for j in range(0, vip_delCnt):
+        #         with s.delete(MAIN_URL + VIP_API + '/' + str(j + 1), headers=headers,
+        #                       verify=False) as res:
+        #             write_log(f'{no}_{schName} : {res.url} / {res.text}')
+        #
+        #     with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
+        #         write_log(f'{no}_{schName} : {res.url} / {res.text}')
+        #
+        #     s.close()
+        #
+        #     # INTERFACE & HOSTNAME Setting
+        #     ssh = SSHConnector()
+        #     th1 = Process(target=ssh.ssh_connect, args=(con_info[0], ifCfg_M))
+        #
+        #     ssh2 = SSHConnector()
+        #     th2 = Process(target=ssh2.ssh_connect, args=(con_info[1], ifCfg_S))
+        #
+        #     th1.start()
+        #     th2.start()
+        #     th1.join()
+        #     th2.join()
+        #
+        # with requests.Session() as s:
+        #     # WEB GUI Initialize
+        #     with s.get(MAIN_URL, verify=False) as res:
+        #         val = res.text
+        #         find_num = val.find("csrf_token")
+        #         csrf_token = val[find_num + 51:find_num + 115]
+        #         pw = "secui00@!"
+        #         iv = Random.new().read(AES.block_size)
+        #
+        #         key = bytes(csrf_token[:32], 'utf-8')
+        #         raw = bytes(_pad(pw), 'utf-8')
+        #         cipher = AES.new(key, AES.MODE_CBC, iv)
+        #         hex_data = (iv.hex() + cipher.encrypt(raw).hex()).encode('utf-8')
+        #         login_pw = base64.b64encode(hex_data).decode('utf-8')
+        #
+        #         login_data = make_login_data(login_pw, csrf_token)
+        #
+        #     # Login Phase
+        #     with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False) as res:
+        #         cookies = res.cookies.get_dict()
+        #         res_dict = json.loads(res.text)
+        #         auth_key = res_dict['result']['api_token']
+        #         headers = {'Authorization': auth_key}
 
             # VIP Setting
             vrid = 0
@@ -454,33 +454,38 @@ if __name__ == "__main__":
             for cfg in vip_cfg:
                 print(cfg)
 
-            for cfg in vip_cfg:
-                with s.post(MAIN_URL + VIP_API, json=cfg, headers=headers, verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            # for cfg in vip_cfg:
+            #     with s.post(MAIN_URL + VIP_API, json=cfg, headers=headers, verify=False) as res:
+            #         write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            #
+            # with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
+            #     write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # Routing Setting
             ip_ktGw = ip_ktL3.split('/')[0]
             ip_skGw = ip_skL3.split('/')[0]
             rt_cfg1, rt_cfg2 = make_routing_config(ip_ktGw, ip_skGw)
 
-            with s.put(MAIN_URL + ROUTING_API, json=rt_cfg1, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            print(rt_cfg1)
+            print(rt_cfg2)
 
-            with s.put(MAIN_URL + HA_API + ROUTING_API, json=rt_cfg2, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            # with s.put(MAIN_URL + ROUTING_API, json=rt_cfg1, headers=headers, verify=False) as res:
+            #     write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            #
+            # with s.put(MAIN_URL + HA_API + ROUTING_API, json=rt_cfg2, headers=headers, verify=False) as res:
+            #     write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            #
+            # # DHCP Setting
+            # with s.get(MAIN_URL + DHCP_API, headers=headers, verify=False) as res:
+            #     var = res.json()
+            #
+            #     idx = var['result'][0]['area_index']
+            #     dhcp_cfg1, dhcp_cfg2 = make_dhcp_config(dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway, idx)
 
-            # DHCP Setting
-            with s.get(MAIN_URL + DHCP_API, headers=headers, verify=False) as res:
-                var = res.json()
-
-                idx = var['result'][0]['area_index']
-                dhcp_cfg1, dhcp_cfg2 = make_dhcp_config(dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway, idx)
-
+            dhcp_cfg1, dhcp_cfg2 = make_dhcp_config(dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway, 0)
             print(dhcp_cfg1)
             print(dhcp_cfg2)
+            continue
 
             with s.put(MAIN_URL + DHCP_API + '/' + str(idx), json=dhcp_cfg1, headers=headers,
                        verify=False) as res:
