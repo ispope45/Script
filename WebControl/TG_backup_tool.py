@@ -17,7 +17,7 @@ BACKUP_API2 = "firewall/firewall/ipv4Policy/exportAction?profileId=&"
 
 CUR_PATH = os.getcwd()
 SRC_DIR = CUR_PATH + "\\"
-SRC_FILE = "Form1.xlsx"
+SRC_FILE = "Form.xlsx"
 
 
 def printProgress(iteration, total, prefix='', suffix='', decimals=1, barLength=100):
@@ -132,19 +132,20 @@ if __name__ == "__main__":
                             write_log(f"{no}_{name}; {MAIN_URL + BACKUP_API}; {res.status_code}; 2.7.1 later")
 
                     result = res.text.replace("\n\n", "\n")
+
+                    res = main(utmIp, USERID, USERPASS, 22, cmd1)
+
+                    f1 = open(SRC_DIR + f"{no}_{org}_{name}.txt", "w")
+                    for val in res:
+                        f1.write(val)
+                    f1.close()
+
+                    f2 = open(SRC_DIR + f"{no}_{org}_{name}.csv", 'w', newline='')
+                    f2.write(result)
+                    f2.close()
+
             except Exception as e:
                 write_log(e)
-
-            res = main(utmIp, USERID, USERPASS, 22, cmd1)
-
-            f1 = open(SRC_DIR + f"{no}_{org}_{name}.txt", "w")
-            for val in res:
-                f1.write(val)
-            f1.close()
-
-            f2 = open(SRC_DIR + f"{no}_{org}_{name}.csv", 'w', newline='')
-            f2.write(result)
-            f2.close()
 
         s.close()
         printProgress(row, ws.max_row, 'Progress:', 'Complete ', 1, 50)

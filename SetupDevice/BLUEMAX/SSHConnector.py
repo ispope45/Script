@@ -68,36 +68,37 @@ class SSHConnector():
 
         return out_data, err_data
 
-    def ssh_connect(self, con_info, hostname, ip1_list, ha):
-        if ha == "M":
-            dev_list = ['eth1', 'eth2', 'eth3', 'eth9', 'eth9', 'eth11', 'eth12']
+    def ssh_connect(self, con_info, ip_cfg):
+        # if ha == "M":
+        #     dev_list = ['eth1', 'eth2', 'eth3', 'eth9', 'eth9', 'eth11', 'eth12']
+        #
+        # elif ha == "A":
+        #     dev_list = ['eth1', 'eth2', 'eth3', 'eth9', 'eth9', 'eth11', 'eth12']
+        #
+        # elif ha == "S":
+        #     dev_list = ['eth1', 'eth2', 'eth3', 'eth9', 'eth9', 'eth12']
+        # else:
+        #     dev_list = []
 
-        elif ha == "A":
-            dev_list = ['eth1', 'eth2', 'eth3', 'eth9', 'eth9', 'eth11', 'eth12']
+        # cmd = []
+        # host_cfg = self.hostname
 
-        elif ha == "S":
-            dev_list = ['eth1', 'eth2', 'eth3', 'eth9', 'eth9', 'eth12']
-        else:
-            dev_list = []
+        # host_cfg[1] = f'set {hostname}\n'
+        # cmd.append(self.preamble)
+        # cmd.append(ip_cfg)
+        # cmd1.append(host_cfg)
+        #
+        # for i in range(0, len(dev_list)):
+        #     if i == 3:
+        #         cmd1.append([f'interface {dev_list[i]}\n', 'no ip add\n', 'no ip add\n',
+        #                      f'ip add {ip1_list[i][0]}/{ip1_list[i][1]}\n',
+        #                      f'ip add {ip1_list[i+1][0]}/{ip1_list[i+1][1]}\n', 'exit\n', 'y\n'])
+        #     elif i == 4:
+        #         continue
+        #     else:
+        #         cmd1.append([f'interface {dev_list[i]}\n', 'no ip add\n',
+        #                      f'ip add {ip1_list[i][0]}/{ip1_list[i][1]}\n', 'exit\n', 'y\n'])
 
-        cmd1 = []
-        host_cfg = self.hostname
-
-        host_cfg[1] = f'set {hostname}\n'
-        cmd1.append(self.preamble)
-        cmd1.append(host_cfg)
-
-        for i in range(0, len(dev_list)):
-            if i == 3:
-                cmd1.append([f'interface {dev_list[i]}\n', 'no ip add\n', 'no ip add\n',
-                             f'ip add {ip1_list[i][0]}/{ip1_list[i][1]}\n',
-                             f'ip add {ip1_list[i+1][0]}/{ip1_list[i+1][1]}\n', 'exit\n', 'y\n'])
-            elif i == 4:
-                continue
-            else:
-                cmd1.append([f'interface {dev_list[i]}\n', 'no ip add\n',
-                             f'ip add {ip1_list[i][0]}/{ip1_list[i][1]}\n', 'exit\n', 'y\n'])
-
-        print(cmd1)
-        self.main(con_info, "admin", "secui00@!", 22, cmd1)
+        print(ip_cfg)
+        # self.main(con_info, "admin", "secui00@!", 22, ip_cfg)
 

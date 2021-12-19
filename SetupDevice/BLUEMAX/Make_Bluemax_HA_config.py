@@ -3,11 +3,12 @@ import requests
 import base64
 import openpyxl
 import json
+import os
 
 from multiprocessing import Process
 
-from Crypto.Cipher import AES
-from Crypto import Random
+from Cryptodome.Cipher import AES
+from Cryptodome import Random
 
 import random
 from datetime import date
@@ -26,8 +27,10 @@ DHCP_API3 = '/api/sm/dhcp/server/apply'
 
 BACKUP_PARAM = {"ha_backup": 1, "target": "POVS"}
 
-CUR_PATH = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\"
-SRC_FILE = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\src.xlsx"
+# CUR_PATH = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\"
+# SRC_FILE = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\src.xlsx"
+CUR_PATH = os.getcwd()
+SRC_FILE = CUR_PATH + "\\src.xlsx"
 START_DATE = date.today()
 
 
@@ -251,6 +254,7 @@ if __name__ == "__main__":
                 res_dict = json.loads(res.text)
                 auth_key = res_dict['result']['api_token']
                 headers = {'Authorization': auth_key}
+                print(res.text)
 
             # VIP Setting
             for cfg in vip_cfg:

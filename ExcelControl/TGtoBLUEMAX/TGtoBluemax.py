@@ -7,6 +7,8 @@ from datetime import date
 
 START_DATE = date.today()
 
+PG_NAME = "TGtoBluemax"
+
 SRC_DIR = os.getcwd() + "//"
 DST_FILE = SRC_DIR + "result.xlsx"
 COL_LIST = ['PRIORITY', 'ENABLED', 'SRC', 'SRC ADDR', 'DST', 'DST ADDR', 'SVC', 'SVC SPEC',
@@ -34,7 +36,7 @@ def printProgress(iteration, total, prefix='', suffix='', decimals=1, barLength=
 
 def write_log(string):
     dat = str(START_DATE).replace("-", "")
-    f = open(SRC_DIR + f'log_{dat}.txt', "a+")
+    f = open(SRC_DIR + f'{PG_NAME}_log_{dat}.txt', "a+")
     f.write(f'{string}\n')
     f.close()
 
@@ -59,7 +61,7 @@ if __name__ == "__main__":
             fileOrg = f.split("_")[1]
             fileSch = f.split("_")[2].split(".")[0]
 
-            data = pd.read_csv(SRC_DIR + f)
+            data = pd.read_csv(SRC_DIR + f, engine='python', encoding='cp949')
             p_data = data[COL_LIST]
             totalValue = p_data.values.tolist()
         except Exception as e:
