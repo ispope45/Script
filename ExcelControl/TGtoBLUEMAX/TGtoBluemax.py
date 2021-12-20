@@ -185,7 +185,7 @@ if __name__ == "__main__":
                 ipOctet = srcCk[0].split('.')
                 if int(ipOctet[0]) == 10:
                     res_ws[f'F{row}'].value = 1
-                    if int(ipOctet[1]) % 10 > 6:
+                    if int(ipOctet[1]) % 10 in [7, 8, 9]:
                         res_ws[f'F{row}'].value = 2
                 else:
                     res_ws[f'F{row}'].value = 2
