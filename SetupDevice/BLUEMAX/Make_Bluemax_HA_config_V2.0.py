@@ -14,7 +14,9 @@ from Cryptodome import Random
 import random
 from datetime import date
 import time
+import urllib3
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 MAIN_URL = 'https://192.168.10.10'
 LOGIN_API = '/api/au/login'
@@ -221,16 +223,16 @@ if __name__ == "__main__":
     ip_w = []
     ip_e = []
 
-    ip_t_vip = []
+    ip_t_vip = [1]
     ip_t_rip1 = []
     ip_t_rip2 = []
-    ip_s_vip = []
+    ip_s_vip = [2]
     ip_s_rip1 = []
     ip_s_rip2 = []
-    ip_w_vip = []
+    ip_w_vip = [3, 4]
     ip_w_rip1 = []
     ip_w_rip2 = []
-    ip_e_vip = []
+    ip_e_vip = [5]
     ip_e_rip1 = []
     ip_e_rip2 = []
 
@@ -347,7 +349,7 @@ if __name__ == "__main__":
 
         with requests.Session() as s:
             # WEB GUI Initialize
-            with s.get(MAIN_URL, verify=False, proxies=proxy) as res:
+            with s.get(MAIN_URL, verify=False) as res:
                 val = res.text
                 find_num = val.find("csrf_token")
                 csrf_token = val[find_num + 51:find_num + 115]
@@ -364,7 +366,7 @@ if __name__ == "__main__":
                 # write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # Login Phase
-            with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False, proxies=proxy) as res:
+            with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False) as res:
                 cookies = res.cookies.get_dict()
                 res_dict = json.loads(res.text)
                 print(res.text)
@@ -376,10 +378,10 @@ if __name__ == "__main__":
             # VIP Delete
             for j in range(0, vip_delCnt):
                 with s.delete(MAIN_URL + VIP_API + '/' + str(j + 1), headers=headers,
-                              verify=False, proxies=proxy) as res:
+                              verify=False) as res:
                     write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
-            with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False, proxies=proxy) as res:
+            with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             s.close()
@@ -398,7 +400,7 @@ if __name__ == "__main__":
 
         with requests.Session() as s:
             # WEB GUI Initialize
-            with s.get(MAIN_URL, verify=False, proxies=proxy) as res:
+            with s.get(MAIN_URL, verify=False) as res:
                 val = res.text
                 find_num = val.find("csrf_token")
                 csrf_token = val[find_num + 51:find_num + 115]
@@ -414,7 +416,7 @@ if __name__ == "__main__":
                 login_data = make_login_data(login_pw, csrf_token)
 
             # Login Phase
-            with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False, proxies=proxy) as res:
+            with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False) as res:
                 cookies = res.cookies.get_dict()
                 res_dict = json.loads(res.text)
                 auth_key = res_dict['result']['api_token']
@@ -427,6 +429,7 @@ if __name__ == "__main__":
             for t in ip_t_vip:
                 dev_name = 'eth1'
                 vrid += 1
+                zoneid += 1
                 vip = t.split('/')[0]
                 vip_mask = int(t.split('/')[1])
                 zone = 1
@@ -443,10 +446,10 @@ if __name__ == "__main__":
                 vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
                                                dev_name, vrid, vip, vip_mask))
 
-            zoneid += 1
             for st in ip_s_vip:
                 dev_name = 'eth2'
                 vrid += 1
+                zoneid += 1
                 vip = st.split('/')[0]
                 vip_mask = int(st.split('/')[1])
                 zone = 1
@@ -463,10 +466,10 @@ if __name__ == "__main__":
                 vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
                                                dev_name, vrid, vip, vip_mask))
 
-            zoneid += 1
             for e in ip_e_vip:
                 dev_name = 'eth3'
                 vrid += 1
+                zoneid += 1
                 vip = e.split('/')[0]
                 vip_mask = int(e.split('/')[1])
                 zone = 1
@@ -483,10 +486,10 @@ if __name__ == "__main__":
                 vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
                                                dev_name, vrid, vip, vip_mask))
 
-            zoneid += 1
             for w in ip_w_vip:
                 dev_name = 'eth9'
                 vrid += 1
+                zoneid += 1
                 vip = w.split('/')[0]
                 vip_mask = int(w.split('/')[1])
                 zone = 1
@@ -525,17 +528,17 @@ if __name__ == "__main__":
             for cfg in vip_cfg:
                 print(cfg)
                 print(type(cfg))
-                with s.post(MAIN_URL + VIP_API, json=cfg, headers=headers, verify=False, proxies=proxy) as res:
+                with s.post(MAIN_URL + VIP_API, json=cfg, headers=headers, verify=False) as res:
                     write_log(f'{no}_{schName} : {res.url} / {res.text}')
                     print(cfg)
 
-            with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False, proxies=proxy) as res:
+            with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # Routing Setting
             ip_ktGw = ip_ktL3.split('/')[0]
             ip_skGw = ip_skL3.split('/')[0]
-            rt_cfg1, rt_cfg2 = make_routing_config(ip_ktGw, ip_skGw)
+            rt_cfg1, rt_cfg2 = make_routing_config(ip_skGw, ip_ktGw)
 
             print(rt_cfg1)
             print(rt_cfg2)
@@ -548,6 +551,7 @@ if __name__ == "__main__":
 
             # DHCP Setting
             with s.get(MAIN_URL + DHCP_API, headers=headers, verify=False) as res:
+                write_log(f'{no}_{schName} : {res.url} / {res.text}')
                 var = res.json()
 
                 idx = var['result'][0]['area_index']
@@ -569,6 +573,7 @@ if __name__ == "__main__":
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             with s.get(MAIN_URL + HA_API + DHCP_API, headers=headers, verify=False) as res:
+                write_log(f'{no}_{schName} : {res.url} / {res.text}')
                 var = res.json()
 
                 idx = var['result'][0]['area_index']
