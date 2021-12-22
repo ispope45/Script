@@ -332,20 +332,20 @@ if __name__ == "__main__":
 
             ifCfg_M.append(['y\n', 'config\n'])
             # ifCfg_M.append(['hostname\n', f'set {m_hostname}\n', 'exit\n'])
-            ifCfg_M.append(ssh_make_config('eth1', 3 + ip_t_delCnt, ip_t_rip1))
-            ifCfg_M.append(ssh_make_config('eth2', 3 + ip_s_delCnt, ip_s_rip1))
-            ifCfg_M.append(ssh_make_config('eth3', 3 + ip_e_delCnt, ip_e_rip1))
-            ifCfg_M.append(ssh_make_config('eth9', 3 + ip_w_delCnt, ip_w_rip1))
-            ifCfg_M.append(ssh_make_config('eth11', 3, [ip_skFw]))
-            ifCfg_M.append(ssh_make_config('eth12', 3, [ip_ktFw_rip1]))
+            ifCfg_M.append(ssh_make_config('eth1', ip_t_delCnt, ip_t_rip1))
+            ifCfg_M.append(ssh_make_config('eth2', ip_s_delCnt, ip_s_rip1))
+            ifCfg_M.append(ssh_make_config('eth3', ip_e_delCnt, ip_e_rip1))
+            ifCfg_M.append(ssh_make_config('eth9', ip_w_delCnt, ip_w_rip1))
+            ifCfg_M.append(ssh_make_config('eth11', 1, [ip_skFw]))
+            ifCfg_M.append(ssh_make_config('eth12', 1, [ip_ktFw_rip1]))
 
             ifCfg_S.append(['y\n', 'config\n'])
             # ifCfg_S.append(['hostname\n', f'set {s_hostname}\n', 'exit\n'])
-            ifCfg_S.append(ssh_make_config('eth1', 3 + ip_t_delCnt, ip_t_rip2))
-            ifCfg_S.append(ssh_make_config('eth2', 3 + ip_s_delCnt, ip_s_rip2))
-            ifCfg_S.append(ssh_make_config('eth3', 3 + ip_e_delCnt, ip_e_rip2))
-            ifCfg_S.append(ssh_make_config('eth9', 3 + ip_w_delCnt, ip_w_rip2))
-            ifCfg_S.append(ssh_make_config('eth12', 3, [ip_ktFw_rip2]))
+            ifCfg_S.append(ssh_make_config('eth1', ip_t_delCnt, ip_t_rip2))
+            ifCfg_S.append(ssh_make_config('eth2', ip_s_delCnt, ip_s_rip2))
+            ifCfg_S.append(ssh_make_config('eth3', ip_e_delCnt, ip_e_rip2))
+            ifCfg_S.append(ssh_make_config('eth9', ip_w_delCnt, ip_w_rip2))
+            ifCfg_S.append(ssh_make_config('eth12', 1, [ip_ktFw_rip2]))
 
         else:
             continue
@@ -394,11 +394,11 @@ if __name__ == "__main__":
 
             host_data1 = make_host_config(m_hostname)
             with s.put(MAIN_URL + EQUIP_API, json=host_data1, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url}')
+                write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             host_data2 = make_host_config(s_hostname)
             with s.put(MAIN_URL + HA_API + EQUIP_API, json=host_data2, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url}')
+                write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             s.close()
 

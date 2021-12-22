@@ -70,4 +70,4 @@ if __name__ == "__main__":
         prog += 1
         printProgress(prog, len(fileList), 'Progress:', 'Complete ', 1, 50)
 
-    wb.save(DST_FILE)
+        wb.save(DST_FILE)

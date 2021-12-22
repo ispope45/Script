@@ -36,69 +36,74 @@ if __name__ == "__main__":
         Org = ws[f'B{row}'].value
         schName = ws[f'D{row}'].value
         hostname = ws[f'E{row}'].value
+        execution = ws[f'T{row}'].value
 
         hostname_t = hostname + "_TL2-1"
         hostname_s = hostname + "_SL2-1"
         hostname_w = hostname + "_WL2-1"
         hostname_e = hostname + "_EL2-1"
 
-        ip_t = ws[f'F{row}'].value.split(',')
-        ip_s = ws[f'G{row}'].value.split(',')
-        ip_w = ws[f'H{row}'].value.split(',')
-        ip_e = ws[f'J{row}'].value.split(',')
-
-        ip_t_l2, ip_t_gw = ip_calculator(ip_t[0], 245)
-        ip_s_l2, ip_s_gw = ip_calculator(ip_s[0], 244)
-        ip_w_l2, ip_w_gw = ip_calculator(ip_w[0], 242)
-        ip_e_l2, ip_e_gw = ip_calculator(ip_e[0], 240)
-
         item = []
+        if ws[f'F{row}'].value != "없음":
+            ip_t = ws[f'F{row}'].value.split(',')
+            ip_t_l2, ip_t_gw = ip_calculator(ip_t[0], 245)
+            item.append(No)
+            item.append(Org)
+            item.append(schName)
+            item.append("교사망L2")
+            item.append(hostname_t)
+            item.append(ip_t_l2)
+            item.append(ip_t_gw)
 
-        item.append(No)
-        item.append(Org)
-        item.append(schName)
-        item.append("교사망L2")
-        item.append(hostname_t)
-        item.append(ip_t_l2)
-        item.append(ip_t_gw)
+            item_set.append(item)
 
-        item_set.append(item)
+        if ws[f'G{row}'].value != "없음":
+            item = []
 
-        item = []
+            ip_s = ws[f'G{row}'].value.split(',')
+            ip_s_l2, ip_s_gw = ip_calculator(ip_s[0], 244)
 
-        item.append(No)
-        item.append(Org)
-        item.append(schName)
-        item.append("학생망L2")
-        item.append(hostname_s)
-        item.append(ip_s_l2)
-        item.append(ip_s_gw)
+            item.append(No)
+            item.append(Org)
+            item.append(schName)
+            item.append("학생망L2")
+            item.append(hostname_s)
+            item.append(ip_s_l2)
+            item.append(ip_s_gw)
 
-        item_set.append(item)
+            item_set.append(item)
 
-        item = []
+        if ws[f'H{row}'].value != "없음":
+            item = []
 
-        item.append(No)
-        item.append(Org)
-        item.append(schName)
-        item.append("무선망L2")
-        item.append(hostname_w)
-        item.append(ip_w_l2)
-        item.append(ip_w_gw)
+            ip_w = ws[f'H{row}'].value.split(',')
+            ip_w_l2, ip_w_gw = ip_calculator(ip_w[0], 242)
 
-        item_set.append(item)
+            item.append(No)
+            item.append(Org)
+            item.append(schName)
+            item.append("무선망L2")
+            item.append(hostname_w)
+            item.append(ip_w_l2)
+            item.append(ip_w_gw)
 
-        item = []
+            item_set.append(item)
 
-        item.append(No)
-        item.append(Org)
-        item.append(schName)
-        item.append("기타망L2")
-        item.append(hostname_e)
-        item.append(ip_e_l2)
-        item.append(ip_e_gw)
+        if ws[f'J{row}'].value != "없음":
+            item = []
 
-        item_set.append(item)
+            ip_e = ws[f'J{row}'].value.split(',')
+            ip_e_l2, ip_e_gw = ip_calculator(ip_e[0], 240)
+
+            item.append(No)
+            item.append(Org)
+            item.append(schName)
+            item.append("기타망L2")
+            item.append(hostname_e)
+            item.append(ip_e_l2)
+            item.append(ip_e_gw)
+
+            item_set.append(item)
 
         for val in item_set:
             script = (
@@ -124,7 +129,10 @@ if __name__ == "__main__":
                 '** root 입력시 계정재생성 메세지출력됨\n'
                 '변경값 : mainsw // Sen16701396!\n\n')
 
-            f = open(CUR_PATH + f"\\{val[0]}_{val[1]}_{val[2]}_{val[3]}.txt", "w+")
+            if not(os.path.isdir(CUR_PATH + f'\\{execution}')):
+                os.makedirs(CUR_PATH + f'\\{execution}')
+
+            f = open(CUR_PATH + f"\\{execution}\\{val[0]}_{val[1]}_{val[2]}_{val[3]}.txt", "w+")
             f.write(script)
             f.close()
 

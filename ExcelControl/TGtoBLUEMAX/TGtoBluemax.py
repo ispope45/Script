@@ -240,6 +240,8 @@ if __name__ == "__main__":
                 # print(svc)
                 res_ws[f'S{row}'].value = svc[0]
                 svcVal = svc[1].split(' ')
+                if svcVal[0] == "icmp":
+                    continue
                 res_ws[f'T{row}'].value = svcVal[0]
                 res_ws[f'U{row}'].value = "NONE"
                 res_ws[f'V{row}'].value = "*"
