@@ -51,3 +51,19 @@ cmd.append('exit\n')
 cmd.append('y\n')
 
 print(cmd)
+mask = 18
+subnetmask = ''
+
+if mask // 8 > 0:
+    subnetmask += '255.'
+
+if mask // 8 > 1:
+    subnetmask += '255.'
+
+if mask // 8 > 2:
+    subnetmask += '255.'
+
+subnetmask += str(256 - 2 ** (8 - (mask % 8))) + '.'
+subnetmask += '0'
+
+print(subnetmask)

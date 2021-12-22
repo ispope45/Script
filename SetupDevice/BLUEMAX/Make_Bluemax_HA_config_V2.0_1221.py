@@ -1,10 +1,10 @@
-# from SSHConnector import SSHConnector
+from SSHConnector import SSHConnector
 import requests
 import base64
 import openpyxl
 import json
 import os
-import paramiko
+import sys
 
 from multiprocessing import Process
 
@@ -27,7 +27,6 @@ VIP_API = '/api/sm/ha/virtual-ips'
 DHCP_API = '/api/sm/dhcp/server/dynamic-areas'
 DHCP_API2 = '/api/sm/dhcp/server/config'
 DHCP_API3 = '/api/sm/dhcp/server/apply'
-EQUIP_API = "/api/sm/info/equipment"
 
 BACKUP_PARAM = {"ha_backup": 1, "target": "POVS"}
 
@@ -62,13 +61,6 @@ def make_vip_config(zone, zone_id, mmbr_id, mmbr_uuid, mmbr_hostname, dev_name, 
             "mmbr_hostname": mmbr_hostname, "ifc_name": dev_name, "vrid": vrid, "ip_ver": 4,
             "ip": vip, "netmask": vip_mask, "rip": None}
     return cfg1
-
-
-def make_host_config(hostname):
-    hostdata = {"hostname": hostname,
-                "location": "KR",
-                "desc": ""}
-    return hostdata
 
 
 def make_dhcp_config(start, end, net, subnet, gw, idx):
@@ -159,66 +151,15 @@ def ssh_make_config(interface, del_cnt, ip_set):
     return cmd
 
 
-class SSHConnector():
-    def __init__(self):
-        self.preamble = ['y\n', 'config\n']
-        self.hostname = ['hostname\n', 'set hostname\n', 'exit\n']
-        self.interface = ['interface eth1\n', 'no ip add\n', 'ip add 100.100.100.100/24\n', 'exit\n', 'y\n']
-
-    def main(self, sw_ip, sw_user, sw_pass, sw_port, command_set):
-        host = sw_ip
-        username = sw_user
-        password = sw_pass
-
-        output = list()
-
-        try:
-            conn = paramiko.SSHClient()
-            conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            conn.connect(host, username=username, password=password, port=sw_port, timeout=100)
-            channel = conn.invoke_shell()
-            time.sleep(3)
-            for command in command_set:
-                for line in command:
-                    channel.send(line)
-
-                    out_data, err_data = self.wait_streams(channel)
-                    output.append(out_data)
-                    print(out_data)
-
-            return output
-
-        except Exception as e:
-            if "port" in str(e):
-                return "Port Error"
-            if "WinError 10060" in str(e):
-                return "Connection Error"
-            print(e)
-            return "Error"
-
-        finally:
-            if conn is not None:
-                conn.close()
-
-    @staticmethod
-    def wait_streams(channel):
-        time.sleep(1)
-        out_data = ""
-        err_data = ""
-        while True:
-            time.sleep(1.5)
-            if channel.recv_ready():
-                out_data += channel.recv(1000).decode('ascii')
-                if channel.recv_stderr_ready():
-                    err_data += channel.recv(1000).decode('ascii')
-                if out_data.find("#") != -1 or out_data.find("[y|n]") != -1:
-                    break
-
-        return out_data, err_data
-
-    def ssh_connect(self, con_info, ip_cfg):
-        print(ip_cfg)
-        self.main(con_info, "admin", "secui00@!", 22, ip_cfg)
+def printProgress(iteration, total, prefix='', suffix='', decimals=1, barLength=100):
+    formatStr = "{0:." + str(decimals) + "f}"
+    percent = formatStr.format(100 * (iteration / float(total)))
+    filledLength = int(round(barLength * iteration / float(total)))
+    bar = '#' * filledLength + '-' * (barLength - filledLength)
+    sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percent, '%', suffix)),
+    if iteration == total:
+        sys.stdout.write('\n')
+    sys.stdout.flush()
 
 
 if __name__ == "__main__":
@@ -226,23 +167,25 @@ if __name__ == "__main__":
     wb = openpyxl.load_workbook(SRC_FILE)
     ws = wb.active
 
-    ip_t = []
-    ip_s = []
-    ip_w = []
-    ip_e = []
+    ip_t = [1]
+    ip_s = [1]
+    ip_w = [1, 2]
+    ip_e = [1]
 
     ip_t_vip = [1]
     ip_t_rip1 = []
     ip_t_rip2 = []
-    ip_s_vip = [2]
+    ip_s_vip = [1]
     ip_s_rip1 = []
     ip_s_rip2 = []
-    ip_w_vip = [3, 4]
+    ip_w_vip = [1, 2]
     ip_w_rip1 = []
     ip_w_rip2 = []
-    ip_e_vip = [5]
+    ip_e_vip = [1]
     ip_e_rip1 = []
     ip_e_rip2 = []
+
+    prog = 0
 
     for i in range(2, ws.max_row + 1):
         row = str(i)
@@ -262,11 +205,6 @@ if __name__ == "__main__":
         if vip_delCnt != 0:
             vip_delCnt += 2
 
-        ip_t = []
-        ip_s = []
-        ip_w = []
-        ip_e = []
-
         ifCfg_M = []
         ifCfg_S = []
 
@@ -283,30 +221,31 @@ if __name__ == "__main__":
         ip_e_rip1 = []
         ip_e_rip2 = []
 
+        # print(ip_t_delCnt)
+        # print(ip_s_delCnt)
+        # print(ip_w_delCnt)
+        # print(ip_e_delCnt)
+        #
+        # print(vip_delCnt)
+
         # IF Standalone
         if haCls == "HA":
             con_info = ['192.168.10.10', '192.168.10.11']
-            m_hostname = ws[f'E{row}'].value + "_FW1"
-            s_hostname = ws[f'E{row}'].value + "_FW2"
+            m_hostname = ws[f'E{row}'].value + "_FW-1"
+            s_hostname = ws[f'E{row}'].value + "_FW-2"
 
             # [10.10.10.0/24, 20.20.20.0/24]
-            if ws[f'F{row}'].value != "없음":
-                ip_t = ws[f'F{row}'].value.split(',')
-            if ws[f'G{row}'].value != "없음":
-                ip_s = ws[f'G{row}'].value.split(',')
-            if ws[f'I{row}'].value != "없음":
-                ip_w = ws[f'I{row}'].value.split(',')
-            if ws[f'H{row}'].value != "없음":
-                ip_w += ws[f'H{row}'].value.split(',')
-            if ws[f'J{row}'].value != "없음":
-                ip_e = ws[f'J{row}'].value.split(',')
+            ip_t = ws[f'F{row}'].value.split(',')
+            ip_s = ws[f'G{row}'].value.split(',')
+            ip_w = ws[f'I{row}'].value.split(',') + ws[f'H{row}'].value.split(',')
+            ip_e = ws[f'J{row}'].value.split(',')
 
             ip_skL3 = ws[f'K{row}'].value + "/29"
             ip_skFw = ws[f'L{row}'].value + "/29"
             ip_ktL3 = ws[f'M{row}'].value + "/29"
-            ip_ktFw_vip = ws[f'N{row}'].value + "/28"
-            ip_ktFw_rip1 = ws[f'O{row}'].value + "/28"
-            ip_ktFw_rip2 = ws[f'P{row}'].value + "/28"
+            ip_ktFw_vip = ws[f'N{row}'].value + "/29"
+            ip_ktFw_rip1 = ws[f'O{row}'].value + "/29"
+            ip_ktFw_rip2 = ws[f'P{row}'].value + "/29"
 
             dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway = dhcp_calculator(ws[f'H{row}'].value)
 
@@ -335,24 +274,25 @@ if __name__ == "__main__":
                 ip_e_rip2.append(ip_res[2])
 
             ifCfg_M.append(['y\n', 'config\n'])
-            ifCfg_S.append(['y\n', 'config\n'])
-
+            ifCfg_M.append(['hostname\n', f'set {m_hostname}\n', 'exit\n'])
             ifCfg_M.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_rip1))
-            ifCfg_S.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_rip2))
-
             ifCfg_M.append(ssh_make_config('eth2', 1 + ip_s_delCnt, ip_s_rip1))
-            ifCfg_S.append(ssh_make_config('eth2', 1 + ip_s_delCnt, ip_s_rip2))
-
             ifCfg_M.append(ssh_make_config('eth3', 1 + ip_e_delCnt, ip_e_rip1))
-            ifCfg_S.append(ssh_make_config('eth3', 1 + ip_e_delCnt, ip_e_rip2))
-
             ifCfg_M.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_rip1))
-            ifCfg_S.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_rip2))
-
             ifCfg_M.append(ssh_make_config('eth11', 1, [ip_skFw]))
-
             ifCfg_M.append(ssh_make_config('eth12', 1, [ip_ktFw_rip1]))
+
+            ifCfg_S.append(['y\n', 'config\n'])
+            ifCfg_S.append(['hostname\n', f'set {s_hostname}\n', 'exit\n'])
+            ifCfg_S.append(ssh_make_config('eth1', ip_t_delCnt, ip_t_rip2))
+            ifCfg_S.append(ssh_make_config('eth2', ip_s_delCnt, ip_s_rip2))
+            ifCfg_S.append(ssh_make_config('eth3', ip_e_delCnt, ip_e_rip2))
+            ifCfg_S.append(ssh_make_config('eth9', ip_w_delCnt, ip_w_rip2))
             ifCfg_S.append(ssh_make_config('eth12', 1, [ip_ktFw_rip2]))
+
+            # Progress Count
+            prog += 1
+            printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
         else:
             continue
@@ -378,7 +318,10 @@ if __name__ == "__main__":
                 login_pw = base64.b64encode(hex_data).decode('utf-8')
 
                 login_data = make_login_data(login_pw, csrf_token)
-                # write_log(f'{no}_{schName} : {res.url} / {res.text}')
+
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             # Login Phase
             with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False) as res:
@@ -386,6 +329,7 @@ if __name__ == "__main__":
                 res_dict = json.loads(res.text)
                 auth_key = res_dict['result']['api_token']
                 headers = {'Authorization': auth_key}
+                write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # VIP Delete
             for j in range(0, vip_delCnt):
@@ -395,18 +339,11 @@ if __name__ == "__main__":
 
             with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            host_data1 = make_host_config(m_hostname)
-            with s.put(MAIN_URL + EQUIP_API, json=host_data1, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url}')
-
-            host_data2 = make_host_config(s_hostname)
-            with s.put(MAIN_URL + HA_API + EQUIP_API, json=host_data2, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             s.close()
-
-            time.sleep(10)
 
             # INTERFACE & HOSTNAME Setting
             ssh = SSHConnector()
@@ -419,6 +356,9 @@ if __name__ == "__main__":
             th2.start()
             th1.join()
             th2.join()
+            # Progress Count
+            prog += 1
+            printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
         with requests.Session() as s:
             # WEB GUI Initialize
@@ -443,6 +383,9 @@ if __name__ == "__main__":
                 res_dict = json.loads(res.text)
                 auth_key = res_dict['result']['api_token']
                 headers = {'Authorization': auth_key}
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             # VIP Setting
             vrid = 0
@@ -548,22 +491,37 @@ if __name__ == "__main__":
                                            dev_name, vrid, vip, vip_mask))
 
             for cfg in vip_cfg:
+                # print(cfg)
+                # print(type(cfg))
                 with s.post(MAIN_URL + VIP_API, json=cfg, headers=headers, verify=False) as res:
                     write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                    # print(cfg)
 
             with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             # Routing Setting
             ip_ktGw = ip_ktL3.split('/')[0]
             ip_skGw = ip_skL3.split('/')[0]
             rt_cfg1, rt_cfg2 = make_routing_config(ip_skGw, ip_ktGw)
 
+            # print(rt_cfg1)
+            # print(rt_cfg2)
+
             with s.put(MAIN_URL + ROUTING_API, json=rt_cfg1, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             with s.put(MAIN_URL + HA_API + ROUTING_API, json=rt_cfg2, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             # DHCP Setting
             with s.get(MAIN_URL + DHCP_API, headers=headers, verify=False) as res:
@@ -572,16 +530,33 @@ if __name__ == "__main__":
 
                 idx = var['result'][0]['area_index']
                 dhcp_cfg1, dhcp_cfg2 = make_dhcp_config(dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway, idx)
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
+
+            # dhcp_cfg1, dhcp_cfg2 = make_dhcp_config(dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway, 0)
+            # print(dhcp_cfg1)
+            # print(dhcp_cfg2)
+            # continue
 
             with s.put(MAIN_URL + DHCP_API + '/' + str(idx), json=dhcp_cfg1, headers=headers,
                        verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             with s.put(MAIN_URL + DHCP_API2, json=dhcp_cfg2, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             with s.put(MAIN_URL + DHCP_API3, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             with s.get(MAIN_URL + HA_API + DHCP_API, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
@@ -589,23 +564,39 @@ if __name__ == "__main__":
 
                 idx = var['result'][0]['area_index']
                 dhcp_cfg1, dhcp_cfg2 = make_dhcp_config(dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway, idx)
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             with s.put(MAIN_URL + HA_API + DHCP_API + '/' + str(idx), json=dhcp_cfg1, headers=headers,
                        verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             with s.put(MAIN_URL + HA_API + DHCP_API2, json=dhcp_cfg2, headers=headers,
                        verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             with s.put(MAIN_URL + HA_API + DHCP_API3, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
 
             # Backup File Download
             with s.post(MAIN_URL + BACKUP_API, json=BACKUP_PARAM, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.headers}')
-                f = open(f"{CUR_PATH}\\{no}_{orgName}_{schName}.tar", 'wb',)
+                f = open(f"{CUR_PATH}\\{no}_{schName}.tar", 'wb',)
                 f.write(res.content)
                 f.close()
+                # Progress Count
+                prog += 1
+                printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)
             s.close()
 
+        printProgress(prog, (ws.max_row - 1) * 17, 'Progress:', 'Complete ', 1, 50)

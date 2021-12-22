@@ -238,18 +238,29 @@ if __name__ == "__main__":
                     continue
 
                 # print(svc)
-                res_ws[f'S{row}'].value = svc[0]
                 svcVal = svc[1].split(' ')
                 if svcVal[0] == "icmp":
-                    continue
-                res_ws[f'T{row}'].value = svcVal[0]
-                res_ws[f'U{row}'].value = "NONE"
-                res_ws[f'V{row}'].value = "*"
-                portCk = svcVal[2].split('-')
-                if portCk[0] == portCk[1]:
-                    res_ws[f'W{row}'].value = portCk[0]
+                    res_ws[f'S{row}'].value = "PING"
+                    res_ws[f'T{row}'].value = "ICMP"
+                    res_ws[f'U{row}'].value = "NONE"
+                    res_ws[f'V{row}'].value = "*"
+                    res_ws[f'W{row}'].value = "8"
+                elif svc[1] == "ip proto=2":
+                    res_ws[f'S{row}'].value = "IGMP"
+                    res_ws[f'T{row}'].value = "IGMP"
+                    res_ws[f'U{row}'].value = "NONE"
+                    res_ws[f'V{row}'].value = "*"
+                    res_ws[f'W{row}'].value = "*"
                 else:
-                    res_ws[f'W{row}'].value = svcVal[2]
+                    res_ws[f'S{row}'].value = svc[0]
+                    res_ws[f'T{row}'].value = svcVal[0]
+                    res_ws[f'U{row}'].value = "NONE"
+                    res_ws[f'V{row}'].value = "*"
+                    portCk = svcVal[2].split('-')
+                    if portCk[0] == portCk[1]:
+                        res_ws[f'W{row}'].value = portCk[0]
+                    else:
+                        res_ws[f'W{row}'].value = svcVal[2]
                 row += 1
 
             res_ws_row += max(ruleCnt)
