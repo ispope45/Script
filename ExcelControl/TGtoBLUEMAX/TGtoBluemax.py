@@ -244,7 +244,7 @@ if __name__ == "__main__":
                     res_ws[f'T{row}'].value = "ICMP"
                     res_ws[f'U{row}'].value = "NONE"
                     res_ws[f'V{row}'].value = "*"
-                    res_ws[f'W{row}'].value = "8"
+                    res_ws[f'W{row}'].value = "*"
                 elif svc[1] == "ip proto=2":
                     res_ws[f'S{row}'].value = "IGMP"
                     res_ws[f'T{row}'].value = "IGMP"
@@ -252,8 +252,8 @@ if __name__ == "__main__":
                     res_ws[f'V{row}'].value = "*"
                     res_ws[f'W{row}'].value = "*"
                 else:
-                    res_ws[f'S{row}'].value = svc[0]
-                    res_ws[f'T{row}'].value = svcVal[0]
+                    res_ws[f'S{row}'].value = svc[0].upper()
+                    res_ws[f'T{row}'].value = svcVal[0].upper()
                     res_ws[f'U{row}'].value = "NONE"
                     res_ws[f'V{row}'].value = "*"
                     portCk = svcVal[2].split('-')

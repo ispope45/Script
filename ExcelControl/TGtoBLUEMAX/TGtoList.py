@@ -51,11 +51,10 @@ if __name__ == "__main__":
 
         try:
             data = pd.read_csv(SRC_DIR + f, engine='python', encoding='cp949')
+            p_data = data[COL_LIST2]
         except Exception as e:
             write_log(f'{f};{e}')
             continue
-
-        p_data = data[COL_LIST2]
 
         p_data['No'] = fileNo
         p_data['ORG'] = fileOrg
