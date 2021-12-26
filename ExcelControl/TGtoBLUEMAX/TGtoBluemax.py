@@ -15,6 +15,17 @@ COL_LIST = ['PRIORITY', 'ENABLED', 'SRC', 'SRC ADDR', 'DST', 'DST ADDR', 'SVC', 
             'ACTION', 'REVERSIBLE']
 
 SAMPLE_FILE = "SRC/BLUEMAX_2.5.3_pol.xlsx"
+SERVICE_FILE = "SRC/obj.csv"
+
+exceptionAddr = ['172.28.228.101_NiaAdm', '172.28.228.102_NiaAdm', '172.28.228.103_NiaAdm',
+                 '172.28.228.104_NiaAdm', '172.28.228.105_NiaAdm', '172.28.228.106_NiaAdm',
+                 '172.28.228.107_NiaAdm', '172.28.228.108_NiaAdm', '172.28.228.109_NiaAdm',
+                 '172.28.228.110_NiaAdm', '172.28.228.11_NiaAuthSvr1', '172.28.228.21_NiaAuthSvr2',
+                 '172.28.228.77_wNMS1', '172.28.228.78_wNMS2', '172.28.228.79_wNMS3',
+                 '172.28.228.80_wNMS4', '172.28.228.71_SODE', '172.28.228.70_WNMS',
+                 '172.28.228.70_SODE', '172.28.228.78_wNMS1', '172.28.228.79_wNMS1',
+                 '172.28.228.80_wNMS1', '172.28.228.21_NiaAuthSvr1', '72.28.228.70_WNMS',
+                 '192.168.72.82_NiaEMS1', '192.168.72.83_NiaEMS2', '192.168.72.82_NiaEMS2']
 
 
 def resource_path(relative_path):
@@ -44,6 +55,17 @@ def write_log(string):
 if __name__ == "__main__":
     print("Preparing TG to Bluemax Migration Tool....")
     fileList = os.listdir(SRC_DIR)
+    BLMSvcList = []
+    try:
+        svcFile = pd.read_csv(resource_path(SERVICE_FILE), engine='python')
+        svcData = svcFile['Object']
+        BLMSvcList = svcData.values.tolist()
+
+    except Exception as e:
+        write_log(f'svcFile;{e}')
+    #
+    # print(svcList)
+    # print(type(svcList))
 
     prog = 0
     for f in fileList:
@@ -79,7 +101,7 @@ if __name__ == "__main__":
         # print(totalValue)
         for val in totalValue:
             proc_ws.append(val)
-            print(val)
+            # print(val)
 
         for row in range(2, proc_ws.max_row + 1):
 
@@ -135,10 +157,78 @@ if __name__ == "__main__":
         # print(len(polItem))
 
         res_ws_row = 4
-        print(polItem)
+        # for a in polItem:
+        #     print(a)
+
+        svcChkList = []
+        wireless21 = []
+        deleteList = []
+        ruleNum = 0
+
+        for valid in polItem:
+            # print(valid)
+            isExcept = False
+
+            for val1 in valid[4]:
+                # print(val1[0])
+                if val1[0] in exceptionAddr:
+                    isExcept = True
+                    # print(f"{val1[0]}Except")
+                    wireless21 = valid[5][0]
+
+            for val2 in valid[5]:
+                if val2[0] in exceptionAddr:
+                    isExcept = True
+                    wireless21 = valid[5][0]
+                    # print(f"{val2[0]}Except")
+
+            if isExcept:
+                # print(valid, "delete")
+                deleteList.append(valid)
+
+        for dList in deleteList:
+            polItem.remove(dList)
+
+        if wireless21:
+            nia_cfg = [
+                [1, 'Yes', 'Allow', 'No', [
+                    ['172.28.228.101_NiaAdm', '172.28.228.101/32'], ['172.28.228.102_NiaAdm', '172.28.228.102/32'],
+                    ['172.28.228.103_NiaAdm', '172.28.228.103/32'], ['172.28.228.104_NiaAdm', '172.28.228.104/32'],
+                    ['172.28.228.105_NiaAdm', '172.28.228.105/32'], ['172.28.228.106_NiaAdm', '172.28.228.106/32'],
+                    ['172.28.228.107_NiaAdm', '172.28.228.107/32'], ['172.28.228.108_NiaAdm', '172.28.228.108/32'],
+                    ['172.28.228.109_NiaAdm', '172.28.228.109/32'], ['172.28.228.110_NiaAdm', '172.28.228.110/32']],
+                 [[f'{wireless21[0]}', f'{wireless21[1]}']],
+                 [['PING', 'icmp type=8 code=0'], ['TCP_8822', 'tcp 1-65535 8822-8822'], ['TCP_88', 'tcp 1-65535 88-88'],
+                        ['TCP_6000', 'tcp 1-65535 6000-6000'], ['TCP_8080', 'tcp 1-65535 8080-8080'],
+                        ['TCP_9992', 'tcp 1-65535 9992-9992'], ['TCP_8888', 'tcp 1-65535 8888-8888']]],\
+                [2, 'Yes', 'Allow', 'No', [
+                    ['172.28.228.11_NiaAuthSvr1', '172.28.228.11/32'], ['172.28.228.21_NiaAuthSvr2', '172.28.228.21/32']],
+                 [[f'{wireless21[0]}', f'{wireless21[1]}']],
+                 [['UDP_1812', 'udp 1-65535 1812-1812'], ['UDP_1813', 'udp 1-65535 1813-1813']]],\
+                [3, 'Yes', 'Allow', 'No',[
+                    ['192.168.72.82_NiaEMS1', '192.168.72.82/32'], ['192.168.72.83_NiaEMS2', '192.168.72.83/32'],
+                    ['172.28.228.77_wNMS1', '172.28.228.77/32'], ['172.28.228.78_wNMS2', '172.28.228.78/32'],
+                    ['172.28.228.79_wNMS3', '172.28.228.79/32'], ['172.28.228.80_wNMS4', '172.28.228.80/32']],
+                 [[f'{wireless21[0]}', f'{wireless21[1]}']],
+                 [['PING', 'icmp type=8 code=0'], ['TCP_161', 'tcp 1-65535 161-161'], ['UDP_161', 'udp 1-65535 161-161'],
+                  ['UDP_162', 'udp 1-65535 162-162'], ['UDP_2055', 'udp 1-65535 2055-2055'],
+                  ['UDP_514', 'udp 1-65535 514-514']]],
+                [4, 'Yes', 'Allow', 'No',
+                 [['172.28.228.71_SODE', '172.28.228.71/32'], ['172.28.228.70_WNMS', '172.28.228.70/32']],
+                 [[f'{wireless21[0]}', f'{wireless21[1]}']],
+                 [['TCP_7547', 'tcp 1-65535 7547-7547'], ['TCP_8445', 'tcp 1-65535 8445-8445'],
+                  ['TCP_9445', 'tcp 1-65535 9445-9445'], ['UDP_ALL', 'udp 1-65535 1-65535'],
+                  ['PING', 'icmp type=8 code=0']]]]
+            # print(type(nia_cfg))
+            polItem.insert(0, nia_cfg[3])
+            polItem.insert(0, nia_cfg[2])
+            polItem.insert(0, nia_cfg[1])
+            polItem.insert(0, nia_cfg[0])
+
+        # print(polItem)
 
         for pol in polItem:
-            print(pol)
+            # print(pol)
 
             '''
             [3.0, 'Yes', 'Deny', 'No', 
@@ -156,6 +246,7 @@ if __name__ == "__main__":
                 ]
             ]
             '''
+            ruleNum += 1
 
             ruleCnt = []
             ruleCnt.append(len(pol[4]))
@@ -172,7 +263,8 @@ if __name__ == "__main__":
 
             # print(max(ruleCnt))
             for i in range(res_ws_row, res_ws_row + max(ruleCnt)):
-                res_ws[f'A{i}'].value = pol[0]
+                # res_ws[f'A{i}'].value = pol[0]
+                res_ws[f'A{i}'].value = ruleNum
 
             row = res_ws_row
             for src in pol[4]:
@@ -188,7 +280,10 @@ if __name__ == "__main__":
                     if int(ipOctet[1]) % 10 in [7, 8, 9]:
                         res_ws[f'F{row}'].value = 2
                 else:
-                    res_ws[f'F{row}'].value = 2
+                    if int(ipOctet[0]) in [1, 118, 218] and (int(ipOctet[1]) in [231, 221, 48]):
+                        res_ws[f'F{row}'].value = 1
+                    else:
+                        res_ws[f'F{row}'].value = 2
 
                 if srcCk[0].find("-") != -1:
                     res_ws[f'I{row}'].value = 'N'
@@ -217,7 +312,10 @@ if __name__ == "__main__":
                     if int(ipOctet[1]) % 10 > 6:
                         res_ws[f'L{row}'].value = 2
                 else:
-                    res_ws[f'L{row}'].value = 2
+                    if int(ipOctet[0]) in [1, 118, 218] and (int(ipOctet[1]) in [231, 221, 48]):
+                        res_ws[f'L{row}'].value = 1
+                    else:
+                        res_ws[f'L{row}'].value = 2
 
                 if dstCk[0].find("-") != -1:
                     res_ws[f'O{row}'].value = 'N'
@@ -237,6 +335,17 @@ if __name__ == "__main__":
                 if svc[0] == 'all':
                     continue
 
+                svcChkVal = True
+                for val in svcChkList:
+                    if svc[1] in val:
+                        svcChkVal = False
+                        svc[0] = val[0]
+
+                if svcChkVal:
+                    svcChkList.append(svc)
+
+                # print(svcChkList)
+                #
                 # print(svc)
                 svcVal = svc[1].split(' ')
                 if svcVal[0] == "icmp":
@@ -251,14 +360,41 @@ if __name__ == "__main__":
                     res_ws[f'U{row}'].value = "NONE"
                     res_ws[f'V{row}'].value = "*"
                     res_ws[f'W{row}'].value = "*"
-                else:
-                    res_ws[f'S{row}'].value = svc[0].upper()
-                    res_ws[f'T{row}'].value = svcVal[0].upper()
+                elif svc[1] == "ip proto=47":
+                    res_ws[f'S{row}'].value = "GRE"
+                    res_ws[f'T{row}'].value = "GRE"
                     res_ws[f'U{row}'].value = "NONE"
                     res_ws[f'V{row}'].value = "*"
-                    portCk = svcVal[2].split('-')
-                    if portCk[0] == portCk[1]:
-                        res_ws[f'W{row}'].value = portCk[0]
+                    res_ws[f'W{row}'].value = "*"
+                elif svc[1] == "ip proto=89":
+                    res_ws[f'S{row}'].value = "OSPF"
+                    res_ws[f'T{row}'].value = "OSPF"
+                    res_ws[f'U{row}'].value = "NONE"
+                    res_ws[f'V{row}'].value = "*"
+                    res_ws[f'W{row}'].value = "*"
+                else:
+                    # print(type(svc[0].upper()))
+                    # print(svcList)
+                    if svc[0].upper() in BLMSvcList:
+                        res_ws[f'S{row}'].value = svc[0].upper() + "_1"
+                    else:
+                        res_ws[f'S{row}'].value = svc[0].upper()
+                    res_ws[f'T{row}'].value = svcVal[0].upper()
+                    res_ws[f'U{row}'].value = "NONE"
+
+                    srcPortCk = svcVal[1].split('-')
+                    if srcPortCk[0] == srcPortCk[1]:
+                        res_ws[f'V{row}'].value = srcPortCk[0]
+                    elif svcVal[1] == '1-65535':
+                        res_ws[f'V{row}'].value = "*"
+                    else:
+                        res_ws[f'V{row}'].value = svcVal[1]
+
+                    dstPortCk = svcVal[2].split('-')
+                    if dstPortCk[0] == dstPortCk[1]:
+                        res_ws[f'W{row}'].value = dstPortCk[0]
+                    elif svcVal[2] == '1-65535':
+                        res_ws[f'W{row}'].value = "*"
                     else:
                         res_ws[f'W{row}'].value = svcVal[2]
                 row += 1

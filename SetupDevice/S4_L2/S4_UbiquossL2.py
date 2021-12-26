@@ -37,11 +37,14 @@ if __name__ == "__main__":
         schName = ws[f'D{row}'].value
         hostname = ws[f'E{row}'].value
         execution = ws[f'T{row}'].value
+        exec_date = str(ws[f'S{row}'].value).replace('-', '').split(' ')[0]
 
         hostname_t = hostname + "_TL2-1"
         hostname_s = hostname + "_SL2-1"
         hostname_w = hostname + "_WL2-1"
         hostname_e = hostname + "_EL2-1"
+
+        print(f'{No}/{schName}')
 
         item = []
         if ws[f'F{row}'].value != "없음":
@@ -132,7 +135,9 @@ if __name__ == "__main__":
             if not(os.path.isdir(CUR_PATH + f'\\{execution}')):
                 os.makedirs(CUR_PATH + f'\\{execution}')
 
-            f = open(CUR_PATH + f"\\{execution}\\{val[0]}_{val[1]}_{val[2]}_{val[3]}.txt", "w+")
+            if not(os.path.isdir(CUR_PATH + f'\\{execution}\\{exec_date}')):
+                os.makedirs(CUR_PATH + f'\\{execution}\\{exec_date}')
+            f = open(CUR_PATH + f"\\{execution}\\{exec_date}\\{val[0]}_{val[1]}_{val[2]}_{val[3]}.txt", "w+")
             f.write(script)
             f.close()
 

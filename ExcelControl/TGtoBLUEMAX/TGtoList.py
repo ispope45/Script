@@ -8,10 +8,13 @@ START_DATE = date.today()
 
 PG_NAME = "TGtoList"
 
-SRC_DIR = os.getcwd() + "//"
+# SRC_DIR = os.getcwd() + "\\"
+SRC_DIR = "C:\\Users\\Jungly\\Desktop\\pol\\"
 DST_FILE = SRC_DIR + "result.xlsx"
 COL_LIST1 = ['No', 'ORG', 'NAME']
-COL_LIST2 = ['PRIORITY', 'ENABLED', 'SRC TYPE', 'SRC', 'SRC ADDR', 'DST TYPE', 'DST', 'DST ADDR', 'SVC', 'SVC SPEC',
+# COL_LIST2 = ['PRIORITY', 'ENABLED', 'SRC TYPE', 'SRC', 'SRC ADDR', 'DST TYPE', 'DST', 'DST ADDR', 'SVC', 'SVC SPEC',
+#              'ACTION', 'WEEKLY HIT COUNT', 'QUARTERLY HIT COUNT', 'REVERSIBLE']
+COL_LIST2 = ['PRIORITY', 'ENABLED', 'SRC', 'SRC ADDR', 'DST', 'DST ADDR', 'SVC', 'SVC SPEC',
              'ACTION', 'WEEKLY HIT COUNT', 'QUARTERLY HIT COUNT', 'REVERSIBLE']
 
 
@@ -69,4 +72,4 @@ if __name__ == "__main__":
         prog += 1
         printProgress(prog, len(fileList), 'Progress:', 'Complete ', 1, 50)
 
-        wb.save(DST_FILE)
+    wb.save(DST_FILE)

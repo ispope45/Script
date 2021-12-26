@@ -106,6 +106,15 @@ def write_log(string):
     f.close()
 
 
+def write_log_ssh(string):
+    dat = str(START_DATE).replace("-", "")
+    f = open(CUR_PATH + f'\\log_ssh_{dat}.txt', "a+")
+    now = time.localtime()
+    cur_time = "%02d/%02d,%02d:%02d:%02d" % (now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
+    f.write(f'{cur_time}:::{string}\n')
+    f.close()
+
+
 def ip_calculator(ip):
     subnet = int(ip.split('/')[1])
     ipOctet_A = int(ip.split('/')[0].split('.')[0])
@@ -184,7 +193,7 @@ class SSHConnector():
 
                     out_data, err_data = self.wait_streams(channel)
                     output.append(out_data)
-                    print(out_data)
+                    write_log_ssh(out_data)
 
             return output
 
@@ -206,7 +215,7 @@ class SSHConnector():
         out_data = ""
         err_data = ""
         while True:
-            time.sleep(1.5)
+            time.sleep(2)
             if channel.recv_ready():
                 out_data += channel.recv(1000).decode('ascii')
                 if channel.recv_stderr_ready():
@@ -252,6 +261,12 @@ if __name__ == "__main__":
         orgName = ws[f'B{row}'].value
         schName = ws[f'D{row}'].value
         haCls = ws[f'C{row}'].value
+
+        if haCls == "SA":
+            continue
+
+        execution = ws[f'T{row}'].value
+        exec_date = str(ws[f'S{row}'].value).replace('-', '').split(' ')[0]
 
         ip_t_delCnt = len(ip_t)
         ip_s_delCnt = len(ip_s)
@@ -406,7 +421,7 @@ if __name__ == "__main__":
 
             s.close()
 
-            time.sleep(10)
+            time.sleep(5)
 
             # INTERFACE & HOSTNAME Setting
             ssh = SSHConnector()
@@ -416,7 +431,9 @@ if __name__ == "__main__":
             th2 = Process(target=ssh2.ssh_connect, args=(con_info[1], ifCfg_S))
 
             th1.start()
+            time.sleep(30)
             th2.start()
+
             th1.join()
             th2.join()
 
@@ -604,7 +621,12 @@ if __name__ == "__main__":
             # Backup File Download
             with s.post(MAIN_URL + BACKUP_API, json=BACKUP_PARAM, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.headers}')
-                f = open(f"{CUR_PATH}\\{no}_{orgName}_{schName}.tar", 'wb',)
+                if not (os.path.isdir(CUR_PATH + f'\\{execution}')):
+                    os.makedirs(CUR_PATH + f'\\{execution}')
+
+                if not (os.path.isdir(CUR_PATH + f'\\{execution}\\{exec_date}')):
+                    os.makedirs(CUR_PATH + f'\\{execution}\\{exec_date}')
+                f = open(f"{CUR_PATH}\\{execution}\\{exec_date}\\{no}_{orgName}_{schName}.tar", 'wb',)
                 f.write(res.content)
                 f.close()
             s.close()
