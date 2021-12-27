@@ -20,10 +20,10 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 MAIN_URL = 'https://192.168.10.10'
 LOGIN_API = '/api/au/login'
-HA_API = '/ha:443:ha_grp_2'
+# HA_API = '/ha:443:ha_grp_2'
 BACKUP_API = '/api/sm/backup/manual'
 ROUTING_API = '/api/sm/static-routings/1'
-VIP_API = '/api/sm/ha/virtual-ips'
+# VIP_API = '/api/sm/ha/virtual-ips'
 DHCP_API = '/api/sm/dhcp/server/dynamic-areas'
 DHCP_API2 = '/api/sm/dhcp/server/config'
 DHCP_API3 = '/api/sm/dhcp/server/apply'
@@ -46,7 +46,7 @@ def make_routing_config(gw1, gw2):
                  "weight": 1, "itemIndex": 0}
             ],
             "gwTostring": "", "route_type": 0, "status_check": 0, "desc": ""}
-    cfg2 = {"type": 0, "dest_addr": "0.0.0.0", "dest_mask": 0, "metric": 0,
+    cfg2 = {"type": 0, "dest_addr": "0.0.0.0", "dest_mask": 0, "metric": 10,
             "gw": [
                 {"id": f"{str(random.randint(2000, 9999))}_{gw2}", "addr": gw2, "ifc_id": 13, "ifc_name": "eth12",
                  "weight": 1, "itemIndex": 0}
@@ -260,7 +260,7 @@ if __name__ == "__main__":
         schName = ws[f'D{row}'].value
         haCls = ws[f'C{row}'].value
 
-        if haCls == "SA":
+        if haCls == "HA":
             continue
 
         execution = ws[f'T{row}'].value
@@ -281,7 +281,7 @@ if __name__ == "__main__":
         ip_e = []
 
         ifCfg_M = []
-        ifCfg_S = []
+        # ifCfg_S = []
 
         ip_t_vip = []
         ip_t_rip1 = []
@@ -297,10 +297,10 @@ if __name__ == "__main__":
         ip_e_rip2 = []
 
         # IF Standalone
-        if haCls == "HA":
-            con_info = ['192.168.10.10', '192.168.10.11']
+        if haCls == "SA":
+            con_info = ['192.168.10.12']
             m_hostname = ws[f'E{row}'].value + "_FW1"
-            s_hostname = ws[f'E{row}'].value + "_FW2"
+            # s_hostname = ws[f'E{row}'].value + "_FW2"
 
             # [10.10.10.0/24, 20.20.20.0/24]
             if ws[f'F{row}'].value != "없음":
@@ -316,7 +316,7 @@ if __name__ == "__main__":
 
             ip_skL3 = ws[f'K{row}'].value + "/29"
             ip_skFw = ws[f'L{row}'].value + "/29"
-            ip_ktL3 = ws[f'M{row}'].value + "/28"
+            ip_ktL3 = ws[f'M{row}'].value + "/29"
             ip_ktFw_vip = ws[f'N{row}'].value + "/28"
             ip_ktFw_rip1 = ws[f'O{row}'].value + "/28"
             ip_ktFw_rip2 = ws[f'P{row}'].value + "/28"
@@ -348,24 +348,24 @@ if __name__ == "__main__":
                 ip_e_rip2.append(ip_res[2])
 
             ifCfg_M.append(['y\n', 'config\n'])
-            ifCfg_S.append(['y\n', 'config\n'])
+            # ifCfg_S.append(['y\n', 'config\n'])
 
-            ifCfg_M.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_rip1))
-            ifCfg_S.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_rip2))
+            ifCfg_M.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_vip))
+            # ifCfg_S.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_vip))
 
-            ifCfg_M.append(ssh_make_config('eth2', 1 + ip_s_delCnt, ip_s_rip1))
-            ifCfg_S.append(ssh_make_config('eth2', 1 + ip_s_delCnt, ip_s_rip2))
+            ifCfg_M.append(ssh_make_config('eth2', 1 + ip_s_delCnt, ip_s_vip))
+            # ifCfg_S.append(ssh_make_config('eth2', 1 + ip_s_delCnt, ip_s_rip2))
 
-            ifCfg_M.append(ssh_make_config('eth3', 1 + ip_e_delCnt, ip_e_rip1))
-            ifCfg_S.append(ssh_make_config('eth3', 1 + ip_e_delCnt, ip_e_rip2))
+            ifCfg_M.append(ssh_make_config('eth3', 1 + ip_e_delCnt, ip_e_vip))
+            # ifCfg_S.append(ssh_make_config('eth3', 1 + ip_e_delCnt, ip_e_rip2))
 
-            ifCfg_M.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_rip1))
-            ifCfg_S.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_rip2))
+            ifCfg_M.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_vip))
+            # ifCfg_S.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_rip2))
 
             ifCfg_M.append(ssh_make_config('eth11', 1, [ip_skFw]))
 
-            ifCfg_M.append(ssh_make_config('eth12', 1, [ip_ktFw_rip1]))
-            ifCfg_S.append(ssh_make_config('eth12', 1, [ip_ktFw_rip2]))
+            ifCfg_M.append(ssh_make_config('eth12', 1, [ip_ktFw_vip]))
+            # ifCfg_S.append(ssh_make_config('eth12', 1, [ip_ktFw_rip2]))
 
         else:
             continue
@@ -375,6 +375,22 @@ if __name__ == "__main__":
         # for c2 in ifCfg_S:
         #     print(c2)
 
+        time.sleep(5)
+
+        # INTERFACE & HOSTNAME Setting
+        ssh = SSHConnector()
+        th1 = Process(target=ssh.ssh_connect, args=(con_info[0], ifCfg_M))
+
+        # ssh2 = SSHConnector()
+        # th2 = Process(target=ssh2.ssh_connect, args=(con_info[1], ifCfg_S))
+
+        th1.start()
+        # time.sleep(30)
+        # th2.start()
+
+        th1.join()
+        # th2.join()
+
         with requests.Session() as s:
             # WEB GUI Initialize
             with s.get(MAIN_URL, verify=False) as res:
@@ -391,7 +407,6 @@ if __name__ == "__main__":
                 login_pw = base64.b64encode(hex_data).decode('utf-8')
 
                 login_data = make_login_data(login_pw, csrf_token)
-                # write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # Login Phase
             with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False) as res:
@@ -399,175 +414,10 @@ if __name__ == "__main__":
                 res_dict = json.loads(res.text)
                 auth_key = res_dict['result']['api_token']
                 headers = {'Authorization': auth_key}
-
-            # VIP Delete
-            for j in range(0, vip_delCnt):
-                with s.delete(MAIN_URL + VIP_API + '/' + str(j + 1), headers=headers,
-                              verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             host_data1 = make_host_config(m_hostname)
             with s.put(MAIN_URL + EQUIP_API, json=host_data1, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url}')
-
-            host_data2 = make_host_config(s_hostname)
-            with s.put(MAIN_URL + HA_API + EQUIP_API, json=host_data2, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url}')
-
-            s.close()
-
-            time.sleep(5)
-
-            # INTERFACE & HOSTNAME Setting
-            ssh = SSHConnector()
-            th1 = Process(target=ssh.ssh_connect, args=(con_info[0], ifCfg_M))
-
-            ssh2 = SSHConnector()
-            th2 = Process(target=ssh2.ssh_connect, args=(con_info[1], ifCfg_S))
-
-            th1.start()
-            time.sleep(30)
-            th2.start()
-
-            th1.join()
-            th2.join()
-
-        with requests.Session() as s:
-            # WEB GUI Initialize
-            with s.get(MAIN_URL, verify=False) as res:
-                val = res.text
-                find_num = val.find("csrf_token")
-                csrf_token = val[find_num + 51:find_num + 115]
-                pw = "secui00@!"
-                iv = Random.new().read(AES.block_size)
-
-                key = bytes(csrf_token[:32], 'utf-8')
-                raw = bytes(_pad(pw), 'utf-8')
-                cipher = AES.new(key, AES.MODE_CBC, iv)
-                hex_data = (iv.hex() + cipher.encrypt(raw).hex()).encode('utf-8')
-                login_pw = base64.b64encode(hex_data).decode('utf-8')
-
-                login_data = make_login_data(login_pw, csrf_token)
-
-            # Login Phase
-            with s.post(MAIN_URL + LOGIN_API, json=login_data, verify=False) as res:
-                cookies = res.cookies.get_dict()
-                res_dict = json.loads(res.text)
-                auth_key = res_dict['result']['api_token']
-                headers = {'Authorization': auth_key}
-
-            # VIP Setting
-            vrid = 0
-            zoneid = 0
-            vip_cfg = []
-            for t in ip_t_vip:
-                dev_name = 'eth1'
-                vrid += 1
-                zoneid += 1
-                vip = t.split('/')[0]
-                vip_mask = int(t.split('/')[1])
-                zone = 1
-
-                mmbr_id = 1
-                mmbr_uuid = 'ha_grp_1'
-                mmbr_hostname = m_hostname
-                vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                               dev_name, vrid, vip, vip_mask))
-
-                mmbr_id = 2
-                mmbr_uuid = 'ha_grp_2'
-                mmbr_hostname = s_hostname
-                vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                               dev_name, vrid, vip, vip_mask))
-
-            for st in ip_s_vip:
-                dev_name = 'eth2'
-                vrid += 1
-                zoneid += 1
-                vip = st.split('/')[0]
-                vip_mask = int(st.split('/')[1])
-                zone = 1
-
-                mmbr_id = 1
-                mmbr_uuid = 'ha_grp_1'
-                mmbr_hostname = m_hostname
-                vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                               dev_name, vrid, vip, vip_mask))
-
-                mmbr_id = 2
-                mmbr_uuid = 'ha_grp_2'
-                mmbr_hostname = s_hostname
-                vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                               dev_name, vrid, vip, vip_mask))
-
-            for e in ip_e_vip:
-                dev_name = 'eth3'
-                vrid += 1
-                zoneid += 1
-                vip = e.split('/')[0]
-                vip_mask = int(e.split('/')[1])
-                zone = 1
-
-                mmbr_id = 1
-                mmbr_uuid = 'ha_grp_1'
-                mmbr_hostname = m_hostname
-                vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                               dev_name, vrid, vip, vip_mask))
-
-                mmbr_id = 2
-                mmbr_uuid = 'ha_grp_2'
-                mmbr_hostname = s_hostname
-                vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                               dev_name, vrid, vip, vip_mask))
-
-            for w in ip_w_vip:
-                dev_name = 'eth9'
-                vrid += 1
-                zoneid += 1
-                vip = w.split('/')[0]
-                vip_mask = int(w.split('/')[1])
-                zone = 1
-
-                mmbr_id = 1
-                mmbr_uuid = 'ha_grp_1'
-                mmbr_hostname = m_hostname
-                vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                               dev_name, vrid, vip, vip_mask))
-
-                mmbr_id = 2
-                mmbr_uuid = 'ha_grp_2'
-                mmbr_hostname = s_hostname
-                vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                               dev_name, vrid, vip, vip_mask))
-
-            zoneid += 1
-            dev_name = 'eth12'
-            vrid += 1
-            vip = ip_ktFw_vip.split('/')[0]
-            vip_mask = int(ip_ktFw_vip.split('/')[1])
-            zone = 2
-
-            mmbr_id = 1
-            mmbr_uuid = 'ha_grp_1'
-            mmbr_hostname = m_hostname
-            vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                           dev_name, vrid, vip, vip_mask))
-
-            mmbr_id = 2
-            mmbr_uuid = 'ha_grp_2'
-            mmbr_hostname = s_hostname
-            vip_cfg.append(make_vip_config(zone, zoneid, mmbr_id, mmbr_uuid, mmbr_hostname,
-                                           dev_name, vrid, vip, vip_mask))
-
-            for cfg in vip_cfg:
-                with s.post(MAIN_URL + VIP_API, json=cfg, headers=headers, verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            with s.put(MAIN_URL + VIP_API + '/apply', headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # Routing Setting
             ip_ktGw = ip_ktL3.split('/')[0]
@@ -577,7 +427,7 @@ if __name__ == "__main__":
             with s.put(MAIN_URL + ROUTING_API, json=rt_cfg1, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
-            with s.put(MAIN_URL + HA_API + ROUTING_API, json=rt_cfg2, headers=headers, verify=False) as res:
+            with s.put(MAIN_URL + ROUTING_API, json=rt_cfg2, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # DHCP Setting
@@ -597,24 +447,6 @@ if __name__ == "__main__":
                     write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
                 with s.put(MAIN_URL + DHCP_API3, headers=headers, verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-                with s.get(MAIN_URL + HA_API + DHCP_API, headers=headers, verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-                    var = res.json()
-
-                    idx = var['result'][0]['area_index']
-                    dhcp_cfg1, dhcp_cfg2 = make_dhcp_config(dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway, idx)
-
-                with s.put(MAIN_URL + HA_API + DHCP_API + '/' + str(idx), json=dhcp_cfg1, headers=headers,
-                           verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-                with s.put(MAIN_URL + HA_API + DHCP_API2, json=dhcp_cfg2, headers=headers,
-                           verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-                with s.put(MAIN_URL + HA_API + DHCP_API3, headers=headers, verify=False) as res:
                     write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # Backup File Download
