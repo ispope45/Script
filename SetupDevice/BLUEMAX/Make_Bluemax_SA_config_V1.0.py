@@ -18,18 +18,19 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-MAIN_URL = 'https://192.168.10.10'
+MAIN_URL = 'https://192.168.10.12'
 LOGIN_API = '/api/au/login'
 # HA_API = '/ha:443:ha_grp_2'
 BACKUP_API = '/api/sm/backup/manual'
 ROUTING_API = '/api/sm/static-routings/1'
+ROUTING_API2 = '/api/sm/static-routings/2'
 # VIP_API = '/api/sm/ha/virtual-ips'
 DHCP_API = '/api/sm/dhcp/server/dynamic-areas'
 DHCP_API2 = '/api/sm/dhcp/server/config'
 DHCP_API3 = '/api/sm/dhcp/server/apply'
 EQUIP_API = "/api/sm/info/equipment"
 
-BACKUP_PARAM = {"ha_backup": 1, "target": "POVS"}
+BACKUP_PARAM = {"ha_backup": 0, "target": "POVS"}
 
 proxy = {'https': 'http://127.0.0.1:8080'}
 
@@ -38,7 +39,7 @@ SRC_FILE = CUR_PATH + "\\src.xlsx"
 START_DATE = date.today()
 
 
-# ### gw1: KT, gw2: SK
+# ### gw1: SK, gw2: KT
 def make_routing_config(gw1, gw2):
     cfg1 = {"type": 0, "dest_addr": "0.0.0.0", "dest_mask": 0, "metric": 0,
             "gw": [
@@ -46,7 +47,7 @@ def make_routing_config(gw1, gw2):
                  "weight": 1, "itemIndex": 0}
             ],
             "gwTostring": "", "route_type": 0, "status_check": 0, "desc": ""}
-    cfg2 = {"type": 0, "dest_addr": "0.0.0.0", "dest_mask": 0, "metric": 10,
+    cfg2 = {"type": 0, "dest_addr": "0.0.0.0", "dest_mask": 10, "metric": 10,
             "gw": [
                 {"id": f"{str(random.randint(2000, 9999))}_{gw2}", "addr": gw2, "ifc_id": 13, "ifc_name": "eth12",
                  "weight": 1, "itemIndex": 0}
@@ -97,7 +98,7 @@ def _pad(s):
 
 def write_log(string):
     dat = str(START_DATE).replace("-", "")
-    f = open(CUR_PATH + f'\\log_{dat}.txt', "a+")
+    f = open(CUR_PATH + f'\\log_SA_{dat}.txt', "a+")
     now = time.localtime()
     cur_time = "%02d/%02d,%02d:%02d:%02d" % (now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
     f.write(f'{cur_time}:::{string}\n')
@@ -106,7 +107,7 @@ def write_log(string):
 
 def write_log_ssh(string):
     dat = str(START_DATE).replace("-", "")
-    f = open(CUR_PATH + f'\\log_ssh_{dat}.txt', "a+")
+    f = open(CUR_PATH + f'\\log_ssh_SA_{dat}.txt', "a+")
     now = time.localtime()
     cur_time = "%02d/%02d,%02d:%02d:%02d" % (now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
     f.write(f'{cur_time}:::{string}\n')
@@ -118,10 +119,15 @@ def ip_calculator(ip):
     ipOctet_A = int(ip.split('/')[0].split('.')[0])
     ipOctet_B = int(ip.split('/')[0].split('.')[1])
     ipOctet_C = int(ip.split('/')[0].split('.')[2])
-    # ipOctet_D = int(ip.split('/')[0].split('.')[3])
-
-    ipOctet_Cp = ipOctet_C + (2 ** (24 - subnet)) - 1
-    ipOctet_Dp = 254
+    ipOctet_D = int(ip.split('/')[0].split('.')[3])
+    ipOctet_Cp = ipOctet_C
+    ipOctet_Dp = ipOctet_D
+    if subnet <= 24:
+        ipOctet_Cp = ipOctet_C + (2 ** (24 - subnet)) - 1
+        ipOctet_Dp = 254
+    elif subnet > 24:
+        ipOctet_Dp = (int(ipOctet_D / (2 ** (8 - (subnet - 24)))) + 1) * (2 ** (8 - (subnet - 24))) - 2
+        ipOctet_Cp = ipOctet_C
 
     vip = f'{str(ipOctet_A)}.{str(ipOctet_B)}.{str(ipOctet_Cp)}.{str(ipOctet_Dp)}/{str(subnet)}'
     rip1 = f'{str(ipOctet_A)}.{str(ipOctet_B)}.{str(ipOctet_Cp)}.{str(ipOctet_Dp - 1)}/{str(subnet)}'
@@ -142,7 +148,7 @@ def dhcp_calculator(net):
 
     val = 256 - 2 ** (24 - subnet)
 
-    startIp = f'{str(ipOctet_A)}.{str(ipOctet_B)}.{str(ipOctet_C)}.1'
+    startIp = f'{str(ipOctet_A)}.{str(ipOctet_B)}.{str(ipOctet_C)}.10'
     endIp = f'{str(ipOctet_A)}.{str(ipOctet_B)}.{str(ipOctet_Cp)}.100'
     network = f'{str(ipOctet_A)}.{str(ipOctet_B)}.{str(ipOctet_C)}.0'
     netmask = f'255.255.{str(val)}.0'
@@ -238,16 +244,16 @@ if __name__ == "__main__":
     ip_w = []
     ip_e = []
 
-    ip_t_vip = [1]
+    ip_t_vip = []
     ip_t_rip1 = []
     ip_t_rip2 = []
-    ip_s_vip = [2]
+    ip_s_vip = []
     ip_s_rip1 = []
     ip_s_rip2 = []
-    ip_w_vip = [3, 4]
+    ip_w_vip = []
     ip_w_rip1 = []
     ip_w_rip2 = []
-    ip_e_vip = [5]
+    ip_e_vip = []
     ip_e_rip1 = []
     ip_e_rip2 = []
 
@@ -349,6 +355,10 @@ if __name__ == "__main__":
 
             ifCfg_M.append(['y\n', 'config\n'])
             # ifCfg_S.append(['y\n', 'config\n'])
+            print(ip_t_vip)
+            print(ip_s_vip)
+            print(ip_e_vip)
+            print(ip_w_vip)
 
             ifCfg_M.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_vip))
             # ifCfg_S.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_vip))
@@ -359,7 +369,7 @@ if __name__ == "__main__":
             ifCfg_M.append(ssh_make_config('eth3', 1 + ip_e_delCnt, ip_e_vip))
             # ifCfg_S.append(ssh_make_config('eth3', 1 + ip_e_delCnt, ip_e_rip2))
 
-            ifCfg_M.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_vip))
+            ifCfg_M.append(ssh_make_config('eth8', 1 + ip_w_delCnt, ip_w_vip))
             # ifCfg_S.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_rip2))
 
             ifCfg_M.append(ssh_make_config('eth11', 1, [ip_skFw]))
@@ -385,11 +395,12 @@ if __name__ == "__main__":
         # th2 = Process(target=ssh2.ssh_connect, args=(con_info[1], ifCfg_S))
 
         th1.start()
-        # time.sleep(30)
-        # th2.start()
-
+        time.sleep(5)
+        # # th2.start()
+        #
         th1.join()
         # th2.join()
+        time.sleep(5)
 
         with requests.Session() as s:
             # WEB GUI Initialize
@@ -423,11 +434,13 @@ if __name__ == "__main__":
             ip_ktGw = ip_ktL3.split('/')[0]
             ip_skGw = ip_skL3.split('/')[0]
             rt_cfg1, rt_cfg2 = make_routing_config(ip_skGw, ip_ktGw)
+            print(rt_cfg1)
+            print(rt_cfg2)
 
             with s.put(MAIN_URL + ROUTING_API, json=rt_cfg1, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
-            with s.put(MAIN_URL + ROUTING_API, json=rt_cfg2, headers=headers, verify=False) as res:
+            with s.put(MAIN_URL + ROUTING_API2, json=rt_cfg2, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # DHCP Setting

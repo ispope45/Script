@@ -17,15 +17,24 @@ COL_LIST = ['PRIORITY', 'ENABLED', 'SRC', 'SRC ADDR', 'DST', 'DST ADDR', 'SVC', 
 SAMPLE_FILE = "SRC/BLUEMAX_2.5.3_pol.xlsx"
 SERVICE_FILE = "SRC/obj.csv"
 
-exceptionAddr = ['172.28.228.101_NiaAdm', '172.28.228.102_NiaAdm', '172.28.228.103_NiaAdm',
-                 '172.28.228.104_NiaAdm', '172.28.228.105_NiaAdm', '172.28.228.106_NiaAdm',
-                 '172.28.228.107_NiaAdm', '172.28.228.108_NiaAdm', '172.28.228.109_NiaAdm',
-                 '172.28.228.110_NiaAdm', '172.28.228.11_NiaAuthSvr1', '172.28.228.21_NiaAuthSvr2',
-                 '172.28.228.77_wNMS1', '172.28.228.78_wNMS2', '172.28.228.79_wNMS3',
-                 '172.28.228.80_wNMS4', '172.28.228.71_SODE', '172.28.228.70_WNMS',
-                 '172.28.228.70_SODE', '172.28.228.78_wNMS1', '172.28.228.79_wNMS1',
-                 '172.28.228.80_wNMS1', '172.28.228.21_NiaAuthSvr1', '72.28.228.70_WNMS',
-                 '192.168.72.82_NiaEMS1', '192.168.72.83_NiaEMS2', '192.168.72.82_NiaEMS2']
+exceptionAddrName = ['172.28.228.101_NiaAdm', '172.28.228.102_NiaAdm', '172.28.228.103_NiaAdm',
+                     '172.28.228.104_NiaAdm', '172.28.228.105_NiaAdm', '172.28.228.106_NiaAdm',
+                     '172.28.228.107_NiaAdm', '172.28.228.108_NiaAdm', '172.28.228.109_NiaAdm',
+                     '172.28.228.110_NiaAdm', '172.28.228.11_NiaAuthSvr1', '172.28.228.21_NiaAuthSvr2',
+                     '172.28.228.77_wNMS1', '172.28.228.78_wNMS2', '172.28.228.79_wNMS3',
+                     '172.28.228.80_wNMS4', '172.28.228.71_SODE', '172.28.228.70_WNMS',
+                     '172.28.228.70_SODE', '172.28.228.78_wNMS1', '172.28.228.79_wNMS1',
+                     '172.28.228.80_wNMS1', '172.28.228.21_NiaAuthSvr1', '72.28.228.70_WNMS',
+                     '192.168.72.82_NiaEMS1', '192.168.72.83_NiaEMS2', '192.168.72.82_NiaEMS2']
+
+excpAddrName = ['DMZ대역', 'test248249', 'Cloud_Server_195-196', 'Cloud_Server_13-40', '클라우드', '207.189.104.86',
+                'Cloud_Server_197-200']
+excpAddr = ['3.3.3.0/24', '192.168.72.248-192.168.72.249', '10.197.1.195-10.197.1.196/0',
+            '10.197.1.13-10.197.1.40/32', '10.197.1.195-10.197.1.196/32', '207.189.104.86', '10.192.0.0/16',
+            '10.194.0.0/16', '10.196.0.0/16', '10.198.0.0/16', '10.197.1.197-10.197.1.200/32',
+            '10.197.1.197-10.197.1.200/0']
+
+excpPort = ['VIRUS_TCP_PORT_1', 'VIRUS_UDP_PORT_4', 'Virus_TCP_Port_1', 'Virus_UDP_Port_1']
 
 
 def resource_path(relative_path):
@@ -171,19 +180,34 @@ if __name__ == "__main__":
 
             for val1 in valid[4]:
                 # print(val1[0])
-                if val1[0] in exceptionAddr:
+                if val1[0] in exceptionAddrName:
                     isExcept = True
-                    # print(f"{val1[0]}Except")
                     wireless21 = valid[5][0]
+
+                if val1[0] in excpAddrName:
+                    isExcept = True
+
+                if val1[1] in excpAddr:
+                    isExcept = True
 
             for val2 in valid[5]:
-                if val2[0] in exceptionAddr:
+                if val2[0] in exceptionAddrName:
                     isExcept = True
                     wireless21 = valid[5][0]
-                    # print(f"{val2[0]}Except")
+
+                if val2[0] in excpAddrName:
+                    isExcept = True
+
+                if val2[1] in excpAddr:
+                    isExcept = True
+
+            for val3 in valid[6]:
+                print(val3)
+                if val3[0] in excpPort:
+                    print(val3[0])
+                    isExcept = True
 
             if isExcept:
-                # print(valid, "delete")
                 deleteList.append(valid)
 
         for dList in deleteList:
