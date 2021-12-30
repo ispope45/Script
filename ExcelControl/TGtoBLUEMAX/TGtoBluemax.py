@@ -28,7 +28,9 @@ exceptionAddrName = ['172.28.228.101_NiaAdm', '172.28.228.102_NiaAdm', '172.28.2
                      '192.168.72.82_NiaEMS1', '192.168.72.83_NiaEMS2', '192.168.72.82_NiaEMS2']
 
 excpAddrName = ['DMZ대역', 'test248249', 'Cloud_Server_195-196', 'Cloud_Server_13-40', '클라우드', '207.189.104.86',
-                'Cloud_Server_197-200']
+                'Cloud_Server_197-200', '클라우드VM_1', '클라우드VM_2', '클라우드VM_3', '클라우드VM_4', 'Cloud_IP_192',
+                'Cloud_IP_194', 'Cloud_IP_196', 'Cloud_IP_198']
+
 excpAddr = ['3.3.3.0/24', '192.168.72.248-192.168.72.249', '10.197.1.195-10.197.1.196/0',
             '10.197.1.13-10.197.1.40/32', '10.197.1.195-10.197.1.196/32', '207.189.104.86', '10.192.0.0/16',
             '10.194.0.0/16', '10.196.0.0/16', '10.198.0.0/16', '10.197.1.197-10.197.1.200/32',
@@ -303,6 +305,11 @@ if __name__ == "__main__":
                     res_ws[f'F{row}'].value = 1
                     if int(ipOctet[1]) % 10 in [7, 8, 9]:
                         res_ws[f'F{row}'].value = 2
+                    if int(ipOctet[1]) > 199:
+                        res_ws[f'F{row}'].value = 1
+                    else:
+                        if int(ipOctet[1]) % 10 in [7, 8, 9]:
+                            res_ws[f'F{row}'].value = 2
                 else:
                     if int(ipOctet[0]) in [1, 118, 218] and (int(ipOctet[1]) in [231, 221, 48]):
                         res_ws[f'F{row}'].value = 1
@@ -333,8 +340,10 @@ if __name__ == "__main__":
                 ipOctet = dstCk[0].split('.')
                 if int(ipOctet[0]) == 10:
                     res_ws[f'L{row}'].value = 1
-                    if int(ipOctet[1]) % 10 > 6:
-                        res_ws[f'L{row}'].value = 2
+                    if int(ipOctet[1]) % 10 in [7, 8, 9]:
+                        res_ws[f'F{row}'].value = 2
+                    if int(ipOctet[1]) > 199:
+                        res_ws[f'F{row}'].value = 1
                 else:
                     if int(ipOctet[0]) in [1, 118, 218] and (int(ipOctet[1]) in [231, 221, 48]):
                         res_ws[f'L{row}'].value = 1
