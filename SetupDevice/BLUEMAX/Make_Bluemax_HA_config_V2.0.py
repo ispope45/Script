@@ -29,7 +29,7 @@ DHCP_API2 = '/api/sm/dhcp/server/config'
 DHCP_API3 = '/api/sm/dhcp/server/apply'
 EQUIP_API = "/api/sm/info/equipment"
 
-BACKUP_PARAM = {"ha_backup": 1, "target": "POVS"}
+BACKUP_PARAM = {"ha_backup": 1, "target": "POVSL"}
 
 proxy = {'https': 'http://127.0.0.1:8080'}
 
@@ -311,6 +311,7 @@ if __name__ == "__main__":
                 ip_w = ws[f'I{row}'].value.split(',')
             if ws[f'H{row}'].value != "없음":
                 ip_w += ws[f'H{row}'].value.split(',')
+                dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway = dhcp_calculator(ws[f'H{row}'].value)
             if ws[f'J{row}'].value != "없음":
                 ip_e = ws[f'J{row}'].value.split(',')
 
@@ -320,8 +321,6 @@ if __name__ == "__main__":
             ip_ktFw_vip = ws[f'N{row}'].value + "/28"
             ip_ktFw_rip1 = ws[f'O{row}'].value + "/28"
             ip_ktFw_rip2 = ws[f'P{row}'].value + "/28"
-
-            dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway = dhcp_calculator(ws[f'H{row}'].value)
 
             for val in ip_t:
                 ip_res = ip_calculator(val)

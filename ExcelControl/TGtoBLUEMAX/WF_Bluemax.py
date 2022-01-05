@@ -14,6 +14,7 @@ COL_LIST = ['PRIORITY', 'ENABLED', 'SRC', 'SRC ADDR', 'DST', 'DST ADDR', 'SVC', 
             'ACTION', 'REVERSIBLE']
 
 SAMPLE_FILE = "SRC/BLUEMAX_2.5.3_pol.xlsx"
+SRC_FILE = "SRC/src.xlsx"
 SERVICE_FILE = "SRC/obj.csv"
 
 exceptionAddrName = ['172.28.228.101_NiaAdm', '172.28.228.102_NiaAdm', '172.28.228.103_NiaAdm',
@@ -66,153 +67,46 @@ if __name__ == "__main__":
     print("Preparing TG to Bluemax Migration Tool....")
     fileList = os.listdir(SRC_DIR)
     BLMSvcList = []
-    try:
-        svcFile = pd.read_csv(resource_path(SERVICE_FILE), engine='python')
-        svcData = svcFile['Object']
-        BLMSvcList = svcData.values.tolist()
 
-    except Exception as e:
-        write_log(f'svcFile;{e}')
-    #
-    # print(svcList)
-    # print(type(svcList))
+    res_wb = openpyxl.load_workbook(resource_path(SAMPLE_FILE))
+    res_ws = res_wb.active
+
+    src_wb = openpyxl.load_workbook(resource_path(SRC_FILE))
+    src_ws = src_wb.active
+
+    proc_wb = openpyxl.Workbook()
+    proc_ws = proc_wb.active
+    proc_ws.append(COL_LIST)
+
+    polItem = []
+    ruleList = []
+    srcList = []
+    dstList = []
+    svcList = []
+    reversibleCnt = 0
+    ruleCount = 1
+
+    res_ws_row = 4
 
     prog = 0
-    for f in fileList:
-        if f.find(".csv") == -1:
-            continue
+    for i in range(2, src_ws.max_row + 1):
+        src_row = str(i)
 
-        res_wb = openpyxl.load_workbook(resource_path(SAMPLE_FILE))
-        res_ws = res_wb.active
-
-        proc_wb = openpyxl.Workbook()
-        proc_ws = proc_wb.active
-        proc_ws.append(COL_LIST)
-        try:
-            fileNo = f.split("_")[0]
-            fileOrg = f.split("_")[1]
-            fileSch = f.split("_")[2].split(".")[0]
-
-            data = pd.read_csv(SRC_DIR + f, engine='python', encoding='cp949')
-            p_data = data[COL_LIST]
-            totalValue = p_data.values.tolist()
-        except Exception as e:
-            write_log(f'{f};{e}')
-            continue
+        res_ws_row = 4
 
         polItem = []
         ruleList = []
         srcList = []
         dstList = []
         svcList = []
-        reversibleCnt = 0
-        ruleCount = 1
-
-        # print(totalValue)
-        for val in totalValue:
-            proc_ws.append(val)
-            # print(val)
-
-        for row in range(2, proc_ws.max_row + 1):
-
-            if not(pd.isna(proc_ws[f'A{row}'].value)):
-                ruleList.append(ruleCount)
-                ruleCount += 1
-                ruleList.append(proc_ws[f'B{row}'].value)
-                ruleList.append(proc_ws[f'I{row}'].value)
-                ruleList.append(proc_ws[f'J{row}'].value)
-
-            if not(pd.isna(proc_ws[f'C{row}'].value)):
-                srcList.append([proc_ws[f'C{row}'].value, proc_ws[f'D{row}'].value])
-
-            if not(pd.isna(proc_ws[f'E{row}'].value)):
-                dstList.append([proc_ws[f'E{row}'].value, proc_ws[f'F{row}'].value])
-
-            if not(pd.isna(proc_ws[f'G{row}'].value)):
-                svcList.append([proc_ws[f'G{row}'].value, proc_ws[f'H{row}'].value])
-
-            if not(pd.isna(proc_ws[f'A{row + 1}'].value)):
-                ruleList.append(srcList)
-                ruleList.append(dstList)
-                ruleList.append(svcList)
-                polItem.append(ruleList)
-
-                if ruleList[3] == 'Yes':
-                    ruleList = []
-                    ruleList.append(ruleCount)
-                    ruleCount += 1
-                    ruleList.append(polItem[-1][1])
-                    ruleList.append(polItem[-1][2])
-                    ruleList.append(polItem[-1][3])
-
-                    ruleList.append(dstList)
-                    ruleList.append(srcList)
-                    ruleList.append(svcList)
-                    polItem.append(ruleList)
-                ruleList = []
-                srcList = []
-                dstList = []
-                svcList = []
-
-        ruleList.append(srcList)
-        ruleList.append(dstList)
-        ruleList.append(svcList)
-        polItem.append(ruleList)
-        ruleList = []
-        srcList = []
-        dstList = []
-        svcList = []
-
-        # print(polItem)
-        # print(len(polItem))
-
-        res_ws_row = 4
-        # for a in polItem:
-        #     print(a)
 
         svcChkList = []
         wireless21 = []
         deleteList = []
+
+        wireless21.append("Wireless21")
+        wireless21.append(src_ws[f'B{src_row}'].value)
         ruleNum = 0
-
-        for valid in polItem:
-            # print(valid)
-            isExcept = False
-
-            for val1 in valid[4]:
-                # print(val1[0])
-                if val1[0] in exceptionAddrName:
-                    isExcept = True
-                    wireless21 = valid[5][0]
-
-                if val1[0] in excpAddrName:
-                    isExcept = True
-
-                if val1[1] in excpAddr:
-                    isExcept = True
-
-            for val2 in valid[5]:
-                if val2[0] in exceptionAddrName:
-                    isExcept = True
-                    wireless21 = valid[5][0]
-
-                if val2[0] in excpAddrName:
-                    isExcept = True
-
-                if val2[1] in excpAddr:
-                    isExcept = True
-
-            for val3 in valid[6]:
-                # print(val3)
-                if val3[0] in excpPort:
-                    # print(val3[0])
-                    isExcept = True
-
-            if isExcept:
-                deleteList.append(valid)
-
-        for dList in deleteList:
-            polItem.remove(dList)
 
         if wireless21:
             nia_cfg = [
@@ -431,8 +325,8 @@ if __name__ == "__main__":
             res_ws_row += max(ruleCnt)
 
         prog += 1
-        printProgress(prog, len(fileList), 'Progress:', 'Complete ', 1, 50)
-        res_wb.save(SRC_DIR + f"{fileNo}_{fileOrg}_{fileSch}_BLM.xlsx")
+        printProgress(prog, src_ws.max_row + 1, 'Progress:', 'Complete ', 1, 50)
+        res_wb.save(SRC_DIR + f"{src_ws[f'A{src_row}'].value}_BLM.xlsx")
         proc_wb.close()
         res_wb.close()
 
