@@ -19,7 +19,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 MAIN_URL = 'https://192.168.10.10'
-SUB_URL = 'https://192.168.10.11'
+# SUB_URL = 'https://192.168.10.11'
 LOGIN_API = '/api/au/login'
 # HA_API = '/ha:443:ha_grp_2'
 BACKUP_API = '/api/sm/backup/manual'
@@ -270,7 +270,7 @@ if __name__ == "__main__":
         schName = ws[f'D{row}'].value
         haCls = ws[f'C{row}'].value
 
-        if haCls == "SA":
+        if haCls == "HA":
             continue
 
         execution = ws[f'T{row}'].value
@@ -307,31 +307,31 @@ if __name__ == "__main__":
         ip_e_rip2 = []
 
         # IF Standalone
-        if haCls == "HA":
+        if haCls == "SA":
             con_info = ['192.168.10.10', '192.168.10.11']
             m_hostname = ws[f'E{row}'].value + "_FW1"
-            s_hostname = ws[f'E{row}'].value + "_FW2"
+            # s_hostname = ws[f'E{row}'].value + "_FW2"
 
             # [10.10.10.0/24, 20.20.20.0/24]
             if ws[f'F{row}'].value != "없음":
                 ip_t = ws[f'F{row}'].value.split(',')
             if ws[f'H{row}'].value != "없음":
                 ip_s = ws[f'H{row}'].value.split(',')
-            if ws[f'J{row}'].value != "없음":
-                ip_w = ws[f'J{row}'].value.split(',')
-            if ws[f'K{row}'].value != "없음":
-                ip_w += ws[f'K{row}'].value.split(',')
-            if ws[f'L{row}'].value != "없음":
-                ip_e = ws[f'L{row}'].value.split(',')
+            # if ws[f'J{row}'].value != "없음":
+            #     ip_w = ws[f'J{row}'].value.split(',')
+            # if ws[f'K{row}'].value != "없음":
+            #     ip_w += ws[f'K{row}'].value.split(',')
+            # if ws[f'L{row}'].value != "없음":
+            #     ip_e = ws[f'L{row}'].value.split(',')
 
-            ip_skL3 = ws[f'O{row}'].value
-            ip_skFw = ws[f'P{row}'].value + "/30"
+            ip_skL3 = ws[f'N{row}'].value + "/30"
+            ip_skFw = ws[f'O{row}'].value + "/30"
 
             ip_worker_ktL3 = ws[f'Q{row}'].value + "/29"
-            ip_user_ktL3 = ws[f'V{row}'].value + "/29"
+            # ip_user_ktL3 = ws[f'V{row}'].value + "/29"
 
-            ip_worker_ktFw = ws[f'T{row}'].value + "/29"
-            ip_user_ktFw = ws[f'Y{row}'].value + "/29"
+            ip_worker_ktFw = ws[f'S{row}'].value + "/29"
+            # ip_user_ktFw = ws[f'Y{row}'].value + "/29"
 
             for val in ip_t:
                 ip_res = ip_calculator(val)
@@ -345,53 +345,56 @@ if __name__ == "__main__":
                 ip_s_rip1.append(ip_res[1])
                 ip_s_rip2.append(ip_res[2])
 
-            for val in ip_w:
-                ip_res = ip_calculator(val)
-                ip_w_vip.append(ip_res[0])
-                ip_w_rip1.append(ip_res[1])
-                ip_w_rip2.append(ip_res[2])
-
-            for val in ip_e:
-                # ip_res = ip_calculator(val)
-                ip_e_vip.append(val)
-                ip_e_rip1.append(ip_res[1])
-                ip_e_rip2.append(ip_res[2])
+            # for val in ip_w:
+            #     ip_res = ip_calculator(val)
+            #     ip_w_vip.append(ip_res[0])
+            #     ip_w_rip1.append(ip_res[1])
+            #     ip_w_rip2.append(ip_res[2])
+            #
+            # for val in ip_e:
+            #     # ip_res = ip_calculator(val)
+            #     ip_e_vip.append(val)
+            #     ip_e_rip1.append(ip_res[1])
+            #     ip_e_rip2.append(ip_res[2])
 
             ifCfg_M.append(['y\n', 'config\n'])
             ifCfg_M.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_vip))
             ifCfg_M.append(ssh_make_config('eth2', 1 + ip_s_delCnt, ip_s_vip))
-            ifCfg_M.append(ssh_make_config('eth4', 1 + ip_e_delCnt, ip_e_vip))
-            ifCfg_M.append(ssh_make_config('eth8', 1 + ip_w_delCnt, ip_w_vip))
+            # ifCfg_M.append(ssh_make_config('eth4', 1 + ip_e_delCnt, ip_e_vip))
+            # ifCfg_M.append(ssh_make_config('eth8', 1 + ip_w_delCnt, ip_w_vip))
             ifCfg_M.append(ssh_make_config('eth11', 1, [ip_skFw]))
             ifCfg_M.append(ssh_make_config('eth12', 1, [ip_worker_ktFw]))
-
-            ifCfg_S.append(['y\n', 'config\n'])
-            ifCfg_S.append(ssh_make_config('eth2', 1 + ip_s_delCnt, ip_s_rip1))
-            ifCfg_S.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_rip1))
-            ifCfg_S.append(ssh_make_config('eth12', 1, [ip_user_ktFw]))
+            #
+            # ifCfg_S.append(['y\n', 'config\n'])
+            # ifCfg_S.append(ssh_make_config('eth2', 1 + ip_s_delCnt, ip_s_rip1))
+            # ifCfg_S.append(ssh_make_config('eth9', 1 + ip_w_delCnt, ip_w_rip1))
+            # ifCfg_S.append(ssh_make_config('eth12', 1, [ip_user_ktFw]))
 
         else:
             continue
 
-        time.sleep(5)
+        # time.sleep(5)
 
         # print(ifCfg_M)
         #
         # print(ifCfg_S)
+        # print(ifCfg_M)
+        # continue
 
         # INTERFACE & HOSTNAME Setting
         ssh = SSHConnector()
         th1 = Process(target=ssh.ssh_connect, args=(con_info[0], ifCfg_M))
 
-        ssh2 = SSHConnector()
-        th2 = Process(target=ssh2.ssh_connect, args=(con_info[1], ifCfg_S))
+        # ssh2 = SSHConnector()
+        # th2 = Process(target=ssh2.ssh_connect, args=(con_info[1], ifCfg_S))
 
         th1.start()
-        time.sleep(30)
-        th2.start()
+        # time.sleep(30)
+        # th2.start()
 
         th1.join()
-        th2.join()
+        # th2.join()
+
 
         # Worker FW
         with requests.Session() as s:
@@ -423,7 +426,7 @@ if __name__ == "__main__":
                 write_log(f'{no}_{schName} : {res.url}')
 
             # Routing Setting
-            ip_ktGw = ip_worker_ktFw.split('/')[0]
+            ip_ktGw = ip_worker_ktL3.split('/')[0]
             ip_skGw = ip_skL3.split('/')[0]
             rt_cfg1, rt_cfg2 = make_routing_config(ip_skGw, ip_ktGw)
 
@@ -433,14 +436,14 @@ if __name__ == "__main__":
             with s.put(MAIN_URL + ROUTING_API2, json=rt_cfg2, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
-            adm_cfg = make_adm_ip(ip_s[0].split('/')[0])
-            print(adm_cfg)
-
-            with s.post(MAIN_URL + ADM_IP_API, json=adm_cfg, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            with s.put(MAIN_URL + ADM_IP_API2, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            # adm_cfg = make_adm_ip(ip_s[0].split('/')[0])
+            # print(adm_cfg)
+            #
+            # with s.post(MAIN_URL + ADM_IP_API, json=adm_cfg, headers=headers, verify=False) as res:
+            #     write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            #
+            # with s.put(MAIN_URL + ADM_IP_API2, headers=headers, verify=False) as res:
+            #     write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # Backup File Download
             with s.post(MAIN_URL + BACKUP_API, json=BACKUP_PARAM, headers=headers, verify=False) as res:
@@ -449,59 +452,4 @@ if __name__ == "__main__":
                 f.write(res.content)
                 f.close()
             s.close()
-
-        # User Fw
-        with requests.Session() as s:
-            # WEB GUI Initialize
-            with s.get(SUB_URL, verify=False) as res:
-                val = res.text
-                find_num = val.find("csrf_token")
-                csrf_token = val[find_num + 51:find_num + 115]
-                pw = "secui00@!"
-                iv = Random.new().read(AES.block_size)
-
-                key = bytes(csrf_token[:32], 'utf-8')
-                raw = bytes(_pad(pw), 'utf-8')
-                cipher = AES.new(key, AES.MODE_CBC, iv)
-                hex_data = (iv.hex() + cipher.encrypt(raw).hex()).encode('utf-8')
-                login_pw = base64.b64encode(hex_data).decode('utf-8')
-
-                login_data = make_login_data(login_pw, csrf_token)
-
-            # Login Phase
-            with s.post(SUB_URL + LOGIN_API, json=login_data, verify=False) as res:
-                cookies = res.cookies.get_dict()
-                res_dict = json.loads(res.text)
-                auth_key = res_dict['result']['api_token']
-                headers = {'Authorization': auth_key}
-
-            host_data1 = make_host_config(s_hostname)
-            with s.put(SUB_URL + EQUIP_API, json=host_data1, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url}')
-
-            # Routing Setting
-            ip_ktGw = ip_user_ktFw.split('/')[0]
-            ip_skGw = ip_skL3.split('/')[0]
-            rt_cfg1, rt_cfg2 = make_routing_config(ip_skGw, ip_ktGw)
-
-            with s.put(SUB_URL + ROUTING_API, json=rt_cfg2, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            adm_cfg = make_adm_ip(ip_s[0].split('/')[0])
-            print(adm_cfg)
-
-            with s.post(MAIN_URL + ADM_IP_API, json=adm_cfg, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            with s.put(MAIN_URL + ADM_IP_API2, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-            # Backup File Download
-            with s.post(SUB_URL + BACKUP_API, json=BACKUP_PARAM, headers=headers, verify=False) as res:
-                write_log(f'{no}_{schName} : {res.url} / {res.headers}')
-                f = open(f"{CUR_PATH}\\{no}_{orgName}_{schName}_2.tar", 'wb', )
-                f.write(res.content)
-                f.close()
-            s.close()
-
 
