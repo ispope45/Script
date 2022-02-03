@@ -10,16 +10,18 @@ from Cryptodome import Random
 from datetime import date
 import time
 import urllib3
+import random
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 LOGIN_API = '/api/au/login'
 HA_API = '/ha:443:ha_grp_2'
+POLICY_API = '/api/po/fw/4/rules?key='
 INTERFACE_API = '/api/sm/interfaces'
-PING_API = '/api/co/tools/ping'
+# PING_API = '/api/co/tools/ping'
 
 CUR_PATH = os.getcwd()
-SRC_FILE = CUR_PATH + "\\FwTestForm.xlsx"
+SRC_FILE = CUR_PATH + "\\PolChkForm.xlsx"
 START_DATE = date.today()
 
 proxy = {'https': 'http://127.0.0.1:8080'}
@@ -74,9 +76,6 @@ if __name__ == "__main__":
 
     wb = openpyxl.load_workbook(SRC_FILE)
     ws = wb.active
-    proc_wb = openpyxl.Workbook()
-    proc_ws = proc_wb.active
-    cnt = 0
 
     for row in range(2, ws.max_row + 1):
         schNo = ws[f'A{row}'].value
@@ -129,78 +128,9 @@ if __name__ == "__main__":
             continue
 
         # Interface Information gathering
-        with s.get(mainUrl + INTERFACE_API, headers=headers, verify=False) as res:
+        with s.get(mainUrl + POLICY_API + "fwKey_4_admin_" + str(random.randint(32000, 39999)), headers=headers, verify=False) as res:
             res_dict = json.loads(res.text)
-            M_ifInfo = {}
-            for item in res_dict['result']:
-                M_ifInfo[item['name'] + '_ip_addr'] = item['ipv4address']
-                M_ifInfo[item['name'] + '_link_state'] = item['link_up']
+            ws[f'I{row}'].value = str(len(res_dict['result']))
 
-        if schHaCls == "HA":
-            try:
-                with s.get(mainUrl + HA_API + INTERFACE_API, headers=headers, verify=False) as res:
-                    res_dict = json.loads(res.text)
-                    S_ifInfo = {}
-                    for item in res_dict['result']:
-                        S_ifInfo[item['name'] + '_ip_addr'] = item['ipv4address']
-                        S_ifInfo[item['name'] + '_link_state'] = item['link_up']
-            except Exception as e:
-                write_log(f"{schNo}_{schName} / HA Device Connection Error : {e}")
-                continue
-
-        # Ping Test
-        with s.post(mainUrl + PING_API, json=make_ping_target(pingTarget), headers=headers, verify=False) as res:
-            res_dict = json.loads(res.text)
-            ping_id = res_dict['result']['id']
-
-        ping_result = False
-        for i in range(0, 3):
-            time.sleep(2)
-            with s.get(mainUrl + PING_API + f"/{ping_id}", headers=headers, verify=False) as res:
-                res_dict = json.loads(res.text)
-                for ping_res in res_dict['result']['attributes']['contents']:
-                    if "ttl=" in ping_res:
-                        ping_result = True
-                        break
-                if ping_result:
-                    M_Ping_result = "OK"
-                    break
-                else:
-                    M_Ping_result = "Failed"
-        if schHaCls == "HA":
-            with s.post(mainUrl + HA_API + PING_API, json=make_ping_target(pingTarget), headers=headers, verify=False) as res:
-                res_dict = json.loads(res.text)
-                ping_id = res_dict['result']['id']
-
-            ping_result = False
-            for i in range(0, 3):
-                time.sleep(1)
-                with s.get(mainUrl + HA_API + PING_API + f"/{ping_id}", headers=headers, verify=False) as res:
-                    res_dict = json.loads(res.text)
-                    for ping_res in res_dict['result']['attributes']['contents']:
-                        if "ttl=" in ping_res:
-                            ping_result = True
-                            break
-                    if ping_result:
-                        S_Ping_result = "OK"
-                        break
-                    else:
-                        S_Ping_result = "Failed"
-
-        proc_ws[f'A{row}'].value = schNo
-        proc_ws[f'B{row}'].value = schHaCls
-        proc_ws[f'C{row}'].value = schName
-        proc_ws[f'D{row}'].value = schComCls
-
-        proc_ws[f'H{row}'].value = M_Ping_result
-        proc_ws[f'J{row}'].value = M_ifInfo['eth12_link_state']
-        if schHaCls == "HA":
-            proc_ws[f'I{row}'].value = S_Ping_result
-            proc_ws[f'K{row}'].value = S_ifInfo['eth12_link_state']
-
-        cnt += 1
-        if cnt % 10 == 0:
-            proc_wb.save(CUR_PATH + "\\ktCheck_result.xlsx")
-
-    proc_wb.save(CUR_PATH + "\\ktCheck_result.xlsx")
+    wb.save(SRC_FILE)
 

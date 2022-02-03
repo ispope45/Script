@@ -17,6 +17,7 @@ LOGIN_API = '/api/au/login'
 HA_API = '/ha:443:ha_grp_2'
 INTERFACE_API = '/api/sm/interfaces'
 PING_API = '/api/co/tools/ping'
+VIP_API = '/api/sm/ha/virtual-ips'
 
 CUR_PATH = os.getcwd()
 SRC_FILE = CUR_PATH + "\\FwTestForm.xlsx"
@@ -76,8 +77,9 @@ if __name__ == "__main__":
     ws = wb.active
     proc_wb = openpyxl.Workbook()
     proc_ws = proc_wb.active
-    cnt = 0
 
+    proc_row = 1
+    cnt = 0
     for row in range(2, ws.max_row + 1):
         schNo = ws[f'A{row}'].value
         schHaCls = ws[f'B{row}'].value
@@ -129,78 +131,58 @@ if __name__ == "__main__":
             continue
 
         # Interface Information gathering
-        with s.get(mainUrl + INTERFACE_API, headers=headers, verify=False) as res:
+        with s.get(mainUrl + VIP_API, headers=headers, verify=False) as res:
             res_dict = json.loads(res.text)
-            M_ifInfo = {}
+
+            res_info = []
             for item in res_dict['result']:
-                M_ifInfo[item['name'] + '_ip_addr'] = item['ipv4address']
-                M_ifInfo[item['name'] + '_link_state'] = item['link_up']
+                M_ifInfo = []
+                for sub_item in item['children']:
+                    M_ifInfo.append(item['name'])
+                    M_ifInfo.append(sub_item['ifc_name'])
+                    M_ifInfo.append(sub_item['vip_id'])
+                    M_ifInfo.append(sub_item['vrid'])
+                    M_ifInfo.append(f'{sub_item["ip"]}/{str(sub_item["netmask"])}')
+                    M_ifInfo.append(sub_item['mmbr_uuid'])
+                    res_info.append(M_ifInfo)
 
-        if schHaCls == "HA":
-            try:
-                with s.get(mainUrl + HA_API + INTERFACE_API, headers=headers, verify=False) as res:
-                    res_dict = json.loads(res.text)
-                    S_ifInfo = {}
-                    for item in res_dict['result']:
-                        S_ifInfo[item['name'] + '_ip_addr'] = item['ipv4address']
-                        S_ifInfo[item['name'] + '_link_state'] = item['link_up']
-            except Exception as e:
-                write_log(f"{schNo}_{schName} / HA Device Connection Error : {e}")
-                continue
-
-        # Ping Test
-        with s.post(mainUrl + PING_API, json=make_ping_target(pingTarget), headers=headers, verify=False) as res:
-            res_dict = json.loads(res.text)
-            ping_id = res_dict['result']['id']
-
-        ping_result = False
-        for i in range(0, 3):
-            time.sleep(2)
-            with s.get(mainUrl + PING_API + f"/{ping_id}", headers=headers, verify=False) as res:
-                res_dict = json.loads(res.text)
-                for ping_res in res_dict['result']['attributes']['contents']:
-                    if "ttl=" in ping_res:
-                        ping_result = True
-                        break
-                if ping_result:
-                    M_Ping_result = "OK"
-                    break
-                else:
-                    M_Ping_result = "Failed"
-        if schHaCls == "HA":
-            with s.post(mainUrl + HA_API + PING_API, json=make_ping_target(pingTarget), headers=headers, verify=False) as res:
-                res_dict = json.loads(res.text)
-                ping_id = res_dict['result']['id']
-
-            ping_result = False
-            for i in range(0, 3):
-                time.sleep(1)
-                with s.get(mainUrl + HA_API + PING_API + f"/{ping_id}", headers=headers, verify=False) as res:
-                    res_dict = json.loads(res.text)
-                    for ping_res in res_dict['result']['attributes']['contents']:
-                        if "ttl=" in ping_res:
-                            ping_result = True
-                            break
-                    if ping_result:
-                        S_Ping_result = "OK"
-                        break
-                    else:
-                        S_Ping_result = "Failed"
-
-        proc_ws[f'A{row}'].value = schNo
-        proc_ws[f'B{row}'].value = schHaCls
-        proc_ws[f'C{row}'].value = schName
-        proc_ws[f'D{row}'].value = schComCls
-
-        proc_ws[f'H{row}'].value = M_Ping_result
-        proc_ws[f'J{row}'].value = M_ifInfo['eth12_link_state']
-        if schHaCls == "HA":
-            proc_ws[f'I{row}'].value = S_Ping_result
-            proc_ws[f'K{row}'].value = S_ifInfo['eth12_link_state']
-
+            for list_val in res_info:
+                proc_row += 1
+                proc_ws[f'A{proc_row}'].value = schNo
+                proc_ws[f'B{proc_row}'].value = schName
+                proc_ws[f'C{proc_row}'].value = list_val[0]
+                proc_ws[f'D{proc_row}'].value = list_val[1]
+                proc_ws[f'E{proc_row}'].value = list_val[2]
+                proc_ws[f'F{proc_row}'].value = list_val[3]
+                proc_ws[f'G{proc_row}'].value = list_val[4]
+                proc_ws[f'H{proc_row}'].value = list_val[5]
+            # print(M_ifInfo.keys())
+            # print(M_ifInfo.values())
+            # for i in M_ifInfo.keys():
+            #     print(i)
+            # for j in M_ifInfo.values():
+            #     print(j)
+            # if M_ifInfo[f'{if_val}_ip_addr']:
+            #     for ip_val in M_ifInfo[f'{if_val}_ip_addr']:
+            #         proc_row += 1
+            #
+            #         proc_ws[f'A{proc_row}'].value = schNo
+            #         proc_ws[f'B{proc_row}'].value = schName
+            #         proc_ws[f'C{proc_row}'].value = "MASTER"
+            #         proc_ws[f'G{proc_row}'].value = if_val
+            #         proc_ws[f'H{proc_row}'].value = ip_val
+            #
+            # if S_ifInfo[f'{if_val}_ip_addr']:
+            #     for ip_val in S_ifInfo[f'{if_val}_ip_addr']:
+            #         proc_row += 1
+            #         proc_ws[f'A{proc_row}'].value = schNo
+            #         proc_ws[f'B{proc_row}'].value = schName
+            #         proc_ws[f'C{proc_row}'].value = "SLAVE"
+            #         proc_ws[f'G{proc_row}'].value = if_val
+            #         proc_ws[f'H{proc_row}'].value = ip_val
         cnt += 1
         if cnt % 10 == 0:
-            proc_wb.save(CUR_PATH + "\\ktCheck_result.xlsx")
+            proc_wb.save(CUR_PATH + "\\vipCheck_result.xlsx")
 
-    proc_wb.save(CUR_PATH + "\\ktCheck_result.xlsx")
+    proc_wb.save(CUR_PATH + "\\vipCheck_result.xlsx")
 

@@ -26,7 +26,7 @@ exceptionAddrName = ['172.28.228.101_NiaAdm', '172.28.228.102_NiaAdm', '172.28.2
                      '172.28.228.80_wNMS1', '172.28.228.21_NiaAuthSvr1', '72.28.228.70_WNMS',
                      '192.168.72.82_NiaEMS1', '192.168.72.83_NiaEMS2', '192.168.72.82_NiaEMS2']
 
-excpAddrName = ['DMZ대역', 'test248249', 'Cloud_Server_195-196', 'Cloud_Server_13-40', '클라우드', '207.189.104.86',
+excpAddrName = ['test248249', 'Cloud_Server_195-196', 'Cloud_Server_13-40', '클라우드', '207.189.104.86',
                 'Cloud_Server_197-200', '클라우드VM_1', '클라우드VM_2', '클라우드VM_3', '클라우드VM_4', 'Cloud_IP_192',
                 'Cloud_IP_194', 'Cloud_IP_196', 'Cloud_IP_198']
 

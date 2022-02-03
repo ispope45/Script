@@ -18,7 +18,7 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-MAIN_URL = 'https://192.168.10.12'
+MAIN_URL = 'https://192.168.10.10'
 LOGIN_API = '/api/au/login'
 # HA_API = '/ha:443:ha_grp_2'
 BACKUP_API = '/api/sm/backup/manual'
@@ -30,7 +30,7 @@ DHCP_API2 = '/api/sm/dhcp/server/config'
 DHCP_API3 = '/api/sm/dhcp/server/apply'
 EQUIP_API = "/api/sm/info/equipment"
 
-BACKUP_PARAM = {"ha_backup": 0, "target": "POVS"}
+BACKUP_PARAM = {"ha_backup": 0, "target": "POVSL"}
 
 proxy = {'https': 'http://127.0.0.1:8080'}
 
@@ -304,7 +304,7 @@ if __name__ == "__main__":
 
         # IF Standalone
         if haCls == "SA":
-            con_info = ['192.168.10.12']
+            con_info = ['192.168.10.10']
             m_hostname = ws[f'E{row}'].value + "_FW1"
             # s_hostname = ws[f'E{row}'].value + "_FW2"
 
@@ -355,10 +355,10 @@ if __name__ == "__main__":
 
             ifCfg_M.append(['y\n', 'config\n'])
             # ifCfg_S.append(['y\n', 'config\n'])
-            print(ip_t_vip)
-            print(ip_s_vip)
-            print(ip_e_vip)
-            print(ip_w_vip)
+            # print(ip_t_vip)
+            # print(ip_s_vip)
+            # print(ip_e_vip)
+            # print(ip_w_vip)
 
             ifCfg_M.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_vip))
             # ifCfg_S.append(ssh_make_config('eth1', 1 + ip_t_delCnt, ip_t_vip))
@@ -443,24 +443,24 @@ if __name__ == "__main__":
             with s.put(MAIN_URL + ROUTING_API2, json=rt_cfg2, headers=headers, verify=False) as res:
                 write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
-            # DHCP Setting
-            if ip_w:
-                with s.get(MAIN_URL + DHCP_API, headers=headers, verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-                    var = res.json()
-
-                    idx = var['result'][0]['area_index']
-                    dhcp_cfg1, dhcp_cfg2 = make_dhcp_config(dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway, idx)
-
-                with s.put(MAIN_URL + DHCP_API + '/' + str(idx), json=dhcp_cfg1, headers=headers,
-                           verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-                with s.put(MAIN_URL + DHCP_API2, json=dhcp_cfg2, headers=headers, verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
-
-                with s.put(MAIN_URL + DHCP_API3, headers=headers, verify=False) as res:
-                    write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            # # DHCP Setting
+            # if ip_w:
+            #     with s.get(MAIN_URL + DHCP_API, headers=headers, verify=False) as res:
+            #         write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            #         var = res.json()
+            #
+            #         idx = var['result'][0]['area_index']
+            #         dhcp_cfg1, dhcp_cfg2 = make_dhcp_config(dhcp_start, dhcp_end, dhcp_net, dhcp_mask, dhcp_gateway, idx)
+            #
+            #     with s.put(MAIN_URL + DHCP_API + '/' + str(idx), json=dhcp_cfg1, headers=headers,
+            #                verify=False) as res:
+            #         write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            #
+            #     with s.put(MAIN_URL + DHCP_API2, json=dhcp_cfg2, headers=headers, verify=False) as res:
+            #         write_log(f'{no}_{schName} : {res.url} / {res.text}')
+            #
+            #     with s.put(MAIN_URL + DHCP_API3, headers=headers, verify=False) as res:
+            #         write_log(f'{no}_{schName} : {res.url} / {res.text}')
 
             # Backup File Download
             with s.post(MAIN_URL + BACKUP_API, json=BACKUP_PARAM, headers=headers, verify=False) as res:
