@@ -1,0 +1,277 @@
+02/06,15:55:16:::b'Last login: Sun Feb  6 15:46:11 2022 from 172.16.0.202\r\r\n\r\n\tmessage: same login session already exists\r\n\tdetails: \r\n\t\tcode: 14018\r\n\t\tcause: \r\n\t\t\t\r\n\t\t\r\n\t\r\nforce login ?  [y|n] : y\r\n'
+02/06,15:55:16:::b'config\r\n'
+02/06,15:55:16:::b'ip-route\r\n\r\nWelcome to SECUI\r\n\r\n'
+02/06,15:55:17:::b'add default gw 192.168.10.254 metric 10 eth12\r\n\x1b[33mSDGJ_ES_DONGJA_FW1# \x1b[0mconfig\r\n\x1b[33mSDGJ_ES_DONGJA_FW1(config)# \x1b[0mip-route\r\n\x1b[33mSDGJ_ES_DONGJA_FW1(ip-route)# \x1b[0madd default gw 192.168.10.254 metric 10 et\rth12\r\n% Unknown command.\r\n\x1b[33mSDGJ_ES_DONGJA_FW1(ip-route)# \x1b[0m'
+02/06,15:55:17:::b'delete default\r\nOK\r\n\x1b[33mSDGJ_ES_DONGJA_FW1(ip-route)# \x1b[0m'
+02/06,15:59:06:::Last login: Sun Feb  6 15:49:22 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+[33mSDGJ_ES_DONGJA_FW1# [0m
+02/06,15:59:09:::config
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,15:59:12:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,15:59:15:::add default gw 192.168.10.254 metric 10 etth12
+% Unknown command.
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,15:59:18:::delete default
+[ERROR] 
+	message: call to CLI_DEL_STATIC_ROUTE failed because of 2:RTNETLINK answers: No such process
+
+	details: 
+		code: 14997
+		cause: 
+			api: CLI_DEL_STATIC_ROUTE
+			desc: 2:RTNETLINK answers: No such process
+
+			
+		
+	
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:00:42:::Last login: Sun Feb  6 15:53:09 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+[33mSDGJ_ES_DONGJA_FW1# [0m
+02/06,16:00:45:::config
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,16:00:48:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:00:51:::add default metric 10 gw 192.168.10.254 deev eth12
+[ERROR] 
+	message: Invalid gateway address(192.168.10.254)
+	details: 
+		code: 24100
+		cause: 
+			address: 192.168.10.254
+			
+		
+	
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:00:54:::delete default
+[ERROR] 
+	message: call to CLI_DEL_STATIC_ROUTE failed because of 2:RTNETLINK answers: No such process
+
+	details: 
+		code: 14997
+		cause: 
+			api: CLI_DEL_STATIC_ROUTE
+			desc: 2:RTNETLINK answers: No such process
+
+			
+		
+	
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:05:54:::Last login: Sun Feb  6 15:55:36 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+[33mSDGJ_ES_DONGJA_FW1# [0m
+02/06,16:05:57:::config
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,16:06:01:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:06:04:::add default metric 10 gw 10.109.101.225 deev eth12
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:06:07:::delete default
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:10:35:::Last login: Sun Feb  6 15:59:58 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+[33mSDGJ_ES_DONGJA_FW1# [0m
+02/06,16:10:38:::config
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,16:10:41:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:10:44:::add default metric 10 gw 10.109.101.225 deev eth12
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:10:47:::delete default
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:11:48:::Last login: Sun Feb  6 16:04:39 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+[33mSDGJ_ES_DONGJA_FW1# [0m
+02/06,16:11:51:::config
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,16:11:54:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:11:57:::add default metric 10 gw 10.109.101.225 deev eth12
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:12:00:::delete default
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:13:56:::Last login: Sun Feb  6 16:05:52 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+[33mSDGJ_ES_DONGJA_FW1# [0m
+02/06,16:13:59:::config
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,16:14:02:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:14:05:::add default metric 10 gw 10.109.101.225 deev eth12
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,16:14:08:::delete default
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,17:51:56:::Last login: Sun Feb  6 16:08:00 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+
+02/06,17:51:58:::config
+[33mSDGJ_ES_DONGJA_FW1# [0mconfig
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,17:51:59:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,17:52:00:::add default metric 10 gw 10.109.101.225 deev eth12
+
+02/06,17:52:01:::delete default
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0mdelete default
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,17:52:02:::
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,18:28:53:::Last login: Sun Feb  6 17:46:03 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+
+02/06,18:28:54:::config
+[33mSDGJ_ES_DONGJA_FW1# [0mconfig
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,18:28:55:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,18:28:56:::add default metric 10 gw 10.109.101.225 deev eth12
+
+02/06,18:28:57:::delete default
+
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0mdelete default
+OK
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,18:34:34:::Last login: Sun Feb  6 18:22:59 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+
+02/06,18:34:35:::config
+[33mSDGJ_ES_DONGJA_FW1# [0mconfig
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,18:34:36:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,18:34:37:::add default metric 10 gw 10.109.101.225 deev eth12
+
+02/06,18:47:36:::Last login: Sun Feb  6 18:28:41 2022 from 172.16.0.202
+
+	message: same login session already exists
+	details: 
+		code: 14018
+		cause: 
+			
+		
+	
+force login ?  [y|n] : y
+
+Welcome to SECUI
+
+
+02/06,18:47:37:::config
+[33mSDGJ_ES_DONGJA_FW1# [0mconfig
+[33mSDGJ_ES_DONGJA_FW1(config)# [0m
+02/06,18:47:38:::ip-route
+[33mSDGJ_ES_DONGJA_FW1(ip-route)# [0m
+02/06,18:47:39:::add default metric 10 gw 10.109.101.225 deev eth12
+

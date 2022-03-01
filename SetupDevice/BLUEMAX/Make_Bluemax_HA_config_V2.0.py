@@ -191,6 +191,7 @@ class SSHConnector():
 
                     out_data, err_data = self.wait_streams(channel)
                     output.append(out_data)
+                    print(out_data)
                     write_log_ssh(out_data)
 
             return output
@@ -224,7 +225,6 @@ class SSHConnector():
         return out_data, err_data
 
     def ssh_connect(self, con_info, ip_cfg):
-        print(ip_cfg)
         self.main(con_info, "admin", "secui00@!", 22, ip_cfg)
 
 
