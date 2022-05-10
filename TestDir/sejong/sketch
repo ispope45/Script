@@ -1,0 +1,33 @@
+BASEURL
+ - https://www.segonemerson.co.kr
+
+Login
+ - /member/member_loginOK.asp
+ - POST
+ - backaction=%2Freservation%2Freal_calendar.asp&login_id=501913&pwd=501913
+
+Reservation List
+ - /reservation/real_calendar.asp
+ - GET
+ - reservation.real_calendar.asp 참고
+ - 예약가능한 날짜 받아와야함
+
+Reservation1
+ - /reservation/real_timeList.asp
+ - POST
+ - txtFlag=getReservYN&txtDate=2022-05-18&txtCourse=&txtCourseDesc=&txtTime=&txtRsvnNo=&txtMode=I
+ - reservation.real_timeList.asp 참고
+ - Course별 Timetable 조회해야함
+
+Reservation2
+ - /reservation/reservation_proc.asp
+ - POST
+ - txtFlag=setGolfTime&txtDate=2022-05-18&txtCourse=1&txtCourseDesc=&txtTime=1753&txtStat=RR&txtRsvnNo=&txtMode=I&txtCaddy=Y&txtRemark=&tel1=010&tel2=2775&tel3=4912
+ - txtCourse= 1 : LAKE, 2 : VALLEY, 3 : MOUNTAIN
+
+
+ - rep : 200 OK / {"rtnResult" : "Y", "rtnMsg" : " ", "rtnData" :  []}
+
+
+
+ ** Proc
