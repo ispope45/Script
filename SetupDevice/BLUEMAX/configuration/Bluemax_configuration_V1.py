@@ -383,6 +383,14 @@ if __name__ == "__main__":
                         write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_APPLY_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_APPLY_API};{res_dict['dev_t']};{res_dict['message']}")
+            else:
+                with s.put(mainUrl + POLICY_APPLY_API, json=pol_apply_json, verify=False, headers=headers) as res:
+                    res_dict = json.loads(res.text)
+                    if res_dict['code'] == "ok":
+                        write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_APPLY_API};OK;")
+                    else:
+                        write_log(
+                            f"{schNo}_{schName};{schUtmIp};{POLICY_APPLY_API};{res_dict['dev_t']};{res_dict['message']}")
 
             # SYSLOG Setting
             if str(syslog_setting_ip) != 'None':
@@ -469,7 +477,7 @@ if __name__ == "__main__":
                         write_log(f"{schNo}_{schName};{schUtmIp};{ADMIN_IP_ACL_APPLY_API};{res_dict['dev_t']};{res_dict['message']}")
 
             # MANAGER ACCOUNT
-            if str(dhcp_lease_time) != "None":
+            if str(manager_account_setting) != "None":
                 pw = "qhdks00@!"
                 key = bytes(secui_helper_key[:32], 'utf-8')
                 iv = Random.new().read(AES.block_size)

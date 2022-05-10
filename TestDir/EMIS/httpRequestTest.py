@@ -1,6 +1,9 @@
 import requests
 import openpyxl
 import os
+import sys
+import time
+
 from datetime import date
 
 CUR_PATH = os.getcwd()
@@ -37,6 +40,27 @@ list_param = {
 
 proxy = {'https': 'http://127.0.0.1:8080'}
 
+
+def write_log(string):
+    dat = str(START_DATE).replace("-", "")
+    f = open(CUR_PATH + f'\\log_{dat}.txt', "a+")
+    now = time.localtime()
+    cur_time = "%02d/%02d,%02d:%02d:%02d" % (now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
+    f.write(f'{cur_time};{string}\n')
+    f.close()
+
+
+def print_progress(iteration, total, prefix='', suffix='', decimals=1, barLength=100):
+    formatStr = "{0:." + str(decimals) + "f}"
+    percent = formatStr.format(100 * (iteration / float(total)))
+    filledLength = int(round(barLength * iteration / float(total)))
+    bar = '#' * filledLength + '-' * (barLength - filledLength)
+    sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percent, '%', suffix)),
+    if iteration == total:
+        sys.stdout.write('\n')
+    sys.stdout.flush()
+
+
 if __name__ == "__main__":
     SRC_FILE = CUR_PATH + "\\완료학교.xlsx"
     wb = openpyxl.load_workbook(SRC_FILE)
@@ -51,6 +75,8 @@ if __name__ == "__main__":
             schNo = ws[f'D{row}'].value
             schClear = ws[f'C{row}'].value
 
+            print_progress(row - 1, ws.max_row - 1, 'Progress:', 'Complete ', 1, 50)
+
             if str(schName) == "None":
                 continue
             elif str(schNo) == "None":
@@ -58,9 +84,12 @@ if __name__ == "__main__":
             elif schClear != "O":
                 continue
 
-            DOWNLOAD_API = "/cms/report_summary.do?school_no=1561&proctype=download&step_cls=2"
+            DOWNLOAD_API = f"/cms/report_summary.do?school_no={str(schNo)}&proctype=download&step_cls=2"
+            try:
+                with s.get(URL + DOWNLOAD_API, verify=False, proxies=proxy) as res:
+                    f1 = open(f'./{schName}.pdf', 'wb')
+                    f1.write(res.content)
+                    write_log(f"{schName};{DOWNLOAD_API};OK")
+            except Exception as e:
+                write_log(f"{schName};{e}")
 
-            with s.get(URL + DOWNLOAD_API, verify=False, proxies=proxy) as res:
-
-                f1 = open(f'./text1.pdf', 'wb')
-                f1.write(res.content)
