@@ -1,5 +1,5 @@
 import time
-import base64
+import base64_2
 import binascii
 import hashlib
 
@@ -29,7 +29,7 @@ def make_key():
 
 
 class DecryptionError(Exception):
-    """蹂듯샇???ㅻ쪟"""
+    """복호화 오류"""
 
     def __init__(self, cause):
         self.cause = cause
@@ -45,7 +45,7 @@ class AESCipher:
         self.key = key[:32]
 
     def encrypt(self, raw):
-        """?뷀샇??"""
+        """암호화"""
         raw = self._pad(raw)
         iv = Random.new().read(AES.block_size)
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
@@ -53,14 +53,14 @@ class AESCipher:
         return base64_2.b64encode(hex_data)
 
     def decrypt(self, enc):
-        """蹂듯샇??"""
+        """복호화"""
         try:
             enc = base64_2.b64decode(enc).decode('utf-8')
             enc = bytes(bytearray.fromhex(enc))
             iv = enc[:AES.block_size]
             cipher = AES.new(self.key, AES.MODE_CBC, iv)
 
-            return self._unpad(cipher.decrypt(enc[AES.block_size:]).decode('utf-8'))
+            return self._unpad(cipher.decrypt(enc[AES.block_size:]).decode('utf-                                                                                                                                                             8'))
         except binascii.Error:
             raise DecryptionError('Incorrect padding')
         except UnicodeDecodeError:
@@ -69,18 +69,16 @@ class AESCipher:
             raise DecryptionError(e)
 
     def decrypt_and_b64encode(self, enc):
-        """蹂듯솕?붾맂 ?됰Ц??base64 ?몄퐫??"""
+        """복화화된 평문을 base64 인코딩"""
         to_bytes = self.decrypt(enc)
         if isinstance(to_bytes, str):
             to_bytes = to_bytes.encode('utf-8')
 
-        return base64.b64encode(to_bytes).decode('utf-8')
+        return base64_2.b64encode(to_bytes).decode('utf-8')
 
     def _pad(self, s):
-        return s + (self.bs - len(s) % self.bs) * chr(self.bs - len(s) % self.bs)
+        return s + (self.bs - len(s) % self.bs) * chr(self.bs - len(s) % self.bs                                                                                                                                                             )
 
     @staticmethod
     def _unpad(s):
         return s[:-ord(s[len(s) - 1:])]
-
-

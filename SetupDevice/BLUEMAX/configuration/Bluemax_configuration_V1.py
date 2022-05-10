@@ -317,7 +317,7 @@ if __name__ == "__main__":
 
         with requests.Session() as s:
             # WEB GUI Initialize
-            with s.get(mainUrl, verify=False, proxies=proxy) as res:
+            with s.get(mainUrl, verify=False) as res:
                 val = res.text
                 find_num = val.find("csrf_token")
                 csrf_token = val[find_num + 51:find_num + 115]
@@ -333,7 +333,7 @@ if __name__ == "__main__":
                 login_data = make_login_data(login_pw, csrf_token)
 
             # Login Phase
-            with s.post(mainUrl + LOGIN_API, json=login_data, verify=False, proxies=proxy) as res:
+            with s.post(mainUrl + LOGIN_API, json=login_data, verify=False) as res:
                 cookies = res.cookies.get_dict()
                 res_dict = json.loads(res.text)
                 auth_key = res_dict['result']['api_token']
@@ -342,10 +342,11 @@ if __name__ == "__main__":
 
             # POLICY IMPORT
             if str(policy_import_filename) != "None":
-                with s.get(mainUrl + POLICY_API + "fwKey_4_admin_" + str(random.randint(32000, 39999)), headers=headers, verify=False, proxies=proxy) as res:
+                with s.get(mainUrl + POLICY_API + "fwKey_4_admin_" + str(random.randint(32000, 39999)), headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
+                    rule_cnt = res_dict['result'][0]['rule_cnt']
+                    top_rule_id = res_dict['result'][1]['fw_rule_id']
                     if res_dict['code'] == "ok":
-                        rule_cnt = res_dict['result'][0]['rule_cnt']
                         write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_API};{res_dict['dev_t']};{res_dict['message']}")
@@ -359,24 +360,24 @@ if __name__ == "__main__":
                 pol_import_headers = {'Authorization': auth_key,
                                       'Content-Type': m.content_type}
 
-                with s.post(mainUrl + POLICY_IMPORT_API, data=m, verify=False, headers=pol_import_headers, proxies=proxy) as res:
+                with s.post(mainUrl + POLICY_IMPORT_API, data=m, verify=False, headers=pol_import_headers) as res:
                     res_dict = json.loads(res.text)
+                    file_name = res_dict['result']['file']
+                    pol_import_batch['file'] = file_name
+                    pol_import_batch['top_rule_id_for_group']['default'] = top_rule_id
                     if res_dict['code'] == "ok":
-                        file_name = res_dict['result']['file']
-                        pol_import_batch['file'] = file_name
-                        pol_import_batch['top_rule_id_for_group']['default'] = rule_cnt + 1
                         write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_IMPORT_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_IMPORT_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.post(mainUrl + POLICY_BATCH_APPLY_API, json=pol_import_batch, verify=False, headers=headers, proxies=proxy) as res:
+                with s.post(mainUrl + POLICY_BATCH_APPLY_API, json=pol_import_batch, verify=False, headers=headers) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "async":
                         write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_BATCH_APPLY_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_BATCH_APPLY_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + POLICY_APPLY_API, json=pol_apply_json, verify=False, headers=headers, proxies=proxy) as res:
+                with s.put(mainUrl + POLICY_APPLY_API, json=pol_apply_json, verify=False, headers=headers) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{POLICY_APPLY_API};OK;")
@@ -387,7 +388,7 @@ if __name__ == "__main__":
             if str(syslog_setting_ip) != 'None':
                 syslog_setting_json['svr1_addr'] = syslog_setting_ip
                 syslog_setting_json['svr1_port'] = int(syslog_setting_port)
-                with s.put(mainUrl + SYSLOG_SETTING_API, json=syslog_setting_json, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + SYSLOG_SETTING_API, json=syslog_setting_json, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{SYSLOG_SETTING_API};OK;")
@@ -395,7 +396,7 @@ if __name__ == "__main__":
                         write_log(
                             f"{schNo}_{schName};{schUtmIp};{SYSLOG_SETTING_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + SYSLOG_APPLY_API, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + SYSLOG_APPLY_API, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{SYSLOG_APPLY_API};OK;")
@@ -403,7 +404,7 @@ if __name__ == "__main__":
                         write_log(
                             f"{schNo}_{schName};{schUtmIp};{SYSLOG_APPLY_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + LOG_SETTING_API, json=log_setting_json, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + LOG_SETTING_API, json=log_setting_json, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{LOG_SETTING_API};OK;")
@@ -411,7 +412,7 @@ if __name__ == "__main__":
                         write_log(
                             f"{schNo}_{schName};{schUtmIp};{LOG_SETTING_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + LOG_SETTING_APPLY_API, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + LOG_SETTING_APPLY_API, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{LOG_SETTING_APPLY_API};OK;")
@@ -421,28 +422,28 @@ if __name__ == "__main__":
 
             # SNMP Setting
             if str(snmp_setting) != "None":
-                with s.post(mainUrl + SNMP_SETTING_API, json=snmp_setting_json, headers=headers, verify=False, proxies=proxy) as res:
+                with s.post(mainUrl + SNMP_SETTING_API, json=snmp_setting_json, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{SNMP_SETTING_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{SNMP_SETTING_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.post(mainUrl + SNMP_V3_API, json=snmp_v3_json, headers=headers, verify=False, proxies=proxy) as res:
+                with s.post(mainUrl + SNMP_V3_API, json=snmp_v3_json, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{SNMP_V3_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{SNMP_V3_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + SNMP_ENABLE_API, json=snmp_enable_json, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + SNMP_ENABLE_API, json=snmp_enable_json, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{SNMP_ENABLE_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{SNMP_ENABLE_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + SNMP_APPLY_API, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + SNMP_APPLY_API, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{SNMP_APPLY_API};OK;")
@@ -452,7 +453,7 @@ if __name__ == "__main__":
             # ADMIN ACL Setting
             if str(admin_ip_acl_ip) != "None":
                 admin_ip_acl_json['ip'] = admin_ip_acl_ip
-                with s.post(mainUrl + ADMIN_IP_ACL_API, json=admin_ip_acl_json, headers=headers, verify=False, proxies=proxy) as res:
+                with s.post(mainUrl + ADMIN_IP_ACL_API, json=admin_ip_acl_json, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{ADMIN_IP_ACL_API};OK;")
@@ -460,7 +461,7 @@ if __name__ == "__main__":
                         write_log(
                             f"{schNo}_{schName};{schUtmIp};{ADMIN_IP_ACL_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + ADMIN_IP_ACL_APPLY_API, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + ADMIN_IP_ACL_APPLY_API, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{ADMIN_IP_ACL_APPLY_API};OK;")
@@ -487,21 +488,21 @@ if __name__ == "__main__":
                 user_pw = base64.b64encode(hex_data).decode('utf-8')
                 manager_account_json2['login_pw'] = user_pw
 
-                with s.post(mainUrl + MANAGER_ACCOUNT_CONFIG_API, json=manager_account_json1, headers=headers, verify=False, proxies=proxy) as res:
+                with s.post(mainUrl + MANAGER_ACCOUNT_CONFIG_API, json=manager_account_json1, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{MANAGER_ACCOUNT_CONFIG_API}_JSON1;OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{MANAGER_ACCOUNT_CONFIG_API}_JSON1;{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.post(mainUrl + MANAGER_ACCOUNT_CONFIG_API, json=manager_account_json2, headers=headers, verify=False, proxies=proxy) as res:
+                with s.post(mainUrl + MANAGER_ACCOUNT_CONFIG_API, json=manager_account_json2, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{MANAGER_ACCOUNT_CONFIG_API}_JSON2;OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{MANAGER_ACCOUNT_CONFIG_API}_JSON2;{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + MANAGER_ACCOUNT_CONFIG_APPLY_API, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + MANAGER_ACCOUNT_CONFIG_APPLY_API, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{MANAGER_ACCOUNT_CONFIG_APPLY_API};OK;")
@@ -511,28 +512,28 @@ if __name__ == "__main__":
             # DHCP SETTING
             if str(dhcp_lease_time) != "None":
                 dhcp_config_json['normal_serv_rent_tm'] = int(dhcp_lease_time)
-                with s.put(mainUrl + DHCP_CONFIG_API, json=dhcp_config_json, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + DHCP_CONFIG_API, json=dhcp_config_json, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{DHCP_CONFIG_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{DHCP_CONFIG_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + DHCP_CONFIG_APPLY_API, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + DHCP_CONFIG_APPLY_API, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{DHCP_CONFIG_APPLY_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{DHCP_CONFIG_APPLY_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + ha_api + DHCP_CONFIG_API, json=dhcp_config_json, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + ha_api + DHCP_CONFIG_API, json=dhcp_config_json, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{ha_api}{DHCP_CONFIG_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{ha_api}{DHCP_CONFIG_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + ha_api + DHCP_CONFIG_APPLY_API, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + ha_api + DHCP_CONFIG_APPLY_API, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{ha_api}{DHCP_CONFIG_APPLY_API};OK;")
@@ -543,14 +544,14 @@ if __name__ == "__main__":
             if str(set_gui_port) != "None":
                 manager_access_port_json['cli_port'] = int(set_cli_port)
                 manager_access_port_json['gui_port'] = int(set_gui_port)
-                with s.put(mainUrl + MANAGER_ACCESS_PORT_API, json=manager_access_port_json, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + MANAGER_ACCESS_PORT_API, json=manager_access_port_json, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{MANAGER_ACCESS_PORT_API};OK;")
                     else:
                         write_log(f"{schNo}_{schName};{schUtmIp};{MANAGER_ACCESS_PORT_API};{res_dict['dev_t']};{res_dict['message']}")
 
-                with s.put(mainUrl + MANAGER_ACCESS_PORT_APPLY_API, headers=headers, verify=False, proxies=proxy) as res:
+                with s.put(mainUrl + MANAGER_ACCESS_PORT_APPLY_API, headers=headers, verify=False) as res:
                     res_dict = json.loads(res.text)
                     if res_dict['code'] == "ok":
                         write_log(f"{schNo}_{schName};{schUtmIp};{MANAGER_ACCESS_PORT_APPLY_API};OK;")
@@ -558,7 +559,7 @@ if __name__ == "__main__":
                         write_log(f"{schNo}_{schName};{schUtmIp};{MANAGER_ACCESS_PORT_APPLY_API};{res_dict['dev_t']};{res_dict['message']}")
 
             # LOGOUT
-            # with s.delete(mainUrl + LOGOUT_API, headers=headers, verify=False, proxies=proxy) as res:
+            # with s.delete(mainUrl + LOGOUT_API, headers=headers, verify=False) as res:
             #     res_dict = json.loads(res.text)
 
         print_progress(row - 1, ws.max_row - 1, 'Progress:', 'Complete ', 1, 50)
