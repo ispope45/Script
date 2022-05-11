@@ -9,7 +9,7 @@ HOME_PATH = OS_HOME_DRIVE + OS_HOME_PATH
 SRC_PATH = HOME_PATH + '\\Desktop\\src\\'
 DST_PATH = HOME_PATH + '\\Desktop\\dst\\'
 
-SRC_FILE = 'src.xlsx'
+SRC_FILE = 'backup.xlsx'
 DST_FILE_NAME = 'config'
 DST_FILE_EXT = '.txt'
 

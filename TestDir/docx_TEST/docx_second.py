@@ -6,7 +6,7 @@ CUR_PATH = os.getcwd()
 
 if __name__ == "__main__":
 
-    SRC_FILE = CUR_PATH + "\\src.xlsx"
+    SRC_FILE = CUR_PATH + "\\backup.xlsx"
     wb = openpyxl.load_workbook(SRC_FILE)
     ws = wb.active
 

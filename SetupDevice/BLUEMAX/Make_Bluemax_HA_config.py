@@ -28,9 +28,9 @@ DHCP_API3 = '/api/sm/dhcp/server/apply'
 BACKUP_PARAM = {"ha_backup": 1, "target": "POVS"}
 
 # CUR_PATH = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\"
-# SRC_FILE = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\src.xlsx"
+# SRC_FILE = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\backup.xlsx"
 CUR_PATH = os.getcwd()
-SRC_FILE = CUR_PATH + "\\src.xlsx"
+SRC_FILE = CUR_PATH + "\\backup.xlsx"
 START_DATE = date.today()
 
 

@@ -9,7 +9,7 @@ proxy = {
 # ### Reservation
 reservation_date = '2022-05-23'
 reservation_time = [7, 8, 11, 12]
-reservation_course = '2'  # 1 : LAKE, 2 : VALLEY, 3 : MOUNTAIN
+reservation_course = '1'  # 1 : LAKE, 2 : VALLEY, 3 : MOUNTAIN
 
 MAIN_URL = "https://www.sejongemerson.co.kr"
 LOGIN_API = "/member/member_loginOK.asp"
@@ -101,11 +101,11 @@ if __name__ == "__main__":
 
             if reservation_vali:
                 print("reservation")
-                with s.post(MAIN_URL + RESERVATION_PROC_API, data=RESERVATION_PROC_DATA, verify=False) as res:
-                    print(res.text)
-                    if int(res.status_code) == 200:
-                        print("reservation OK")
-                        break
-
-                    else:
-                        reservation_vali = False
+                # with s.post(MAIN_URL + RESERVATION_PROC_API, data=RESERVATION_PROC_DATA, verify=False) as res:
+                #     print(res.text)
+                #     if int(res.status_code) == 200:
+                #         print("reservation OK")
+                #         break
+                #
+                #     else:
+                #         reservation_vali = False

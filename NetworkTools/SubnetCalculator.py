@@ -27,7 +27,7 @@ Column = {"COL_A": 1,
 START_LINE = 0
 END_LINE = 0
 
-SRC_FILE = 'C:\\Users\\Jungly\\Desktop\\src.xlsx'
+SRC_FILE = 'C:\\Users\\Jungly\\Desktop\\backup.xlsx'
 
 
 def sub_cal(value):

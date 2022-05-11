@@ -8,7 +8,7 @@ import os
 OS_HOME_DRIVE = os.environ['HOMEDRIVE']
 OS_HOME_PATH = os.environ['HOMEPATH']
 HOME_PATH = OS_HOME_DRIVE + OS_HOME_PATH
-SRC_FILE = HOME_PATH + '\\Desktop\\src.xlsx'
+SRC_FILE = HOME_PATH + '\\Desktop\\backup.xlsx'
 
 
 def main(fw_ip, fw_user, fw_pass, sw_ip, sw_user, sw_pass, sw_gw, nms_ip):

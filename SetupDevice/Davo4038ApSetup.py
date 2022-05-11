@@ -15,7 +15,7 @@ DST_PATH = HOME_PATH + '\\Desktop\\dst\\'
 
 TEST = 1
 
-SRC_FILE = 'src.xlsx'
+SRC_FILE = 'backup.xlsx'
 DST_FILE_NAME = 'config'
 DST_FILE_EXT = '.txt'
 

@@ -9,7 +9,7 @@ from datetime import date
 import time
 
 CUR_PATH = os.getcwd()
-SRC_FILE = CUR_PATH + "\\src.xlsx"
+SRC_FILE = CUR_PATH + "\\backup.xlsx"
 START_DATE = date.today()
 
 

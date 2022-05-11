@@ -32,7 +32,7 @@ BAKCUP_PARAM = {"ha_backup": 1, "target": "POVS"}
 proxy = {'https': 'http://127.0.0.1:8080'}
 cookies = {'_next_login': 'index', '_static': '88d4bcd01551a342f397603aace6b3dd74fcab1d77800188e0b0e8bf058bbdf3'}
 
-SRC_FILE = "C:\\Users\\work.Jungly\\Desktop\\src.xlsx"
+SRC_FILE = "C:\\Users\\work.Jungly\\Desktop\\backup.xlsx"
 
 
 # ### gw1: KT, gw2: SK

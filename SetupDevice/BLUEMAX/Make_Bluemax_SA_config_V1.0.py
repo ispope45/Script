@@ -35,7 +35,7 @@ BACKUP_PARAM = {"ha_backup": 0, "target": "POVSL"}
 proxy = {'https': 'http://127.0.0.1:8080'}
 
 CUR_PATH = os.getcwd()
-SRC_FILE = CUR_PATH + "\\src.xlsx"
+SRC_FILE = CUR_PATH + "\\backup.xlsx"
 START_DATE = date.today()
 
 

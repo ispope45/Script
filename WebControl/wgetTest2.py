@@ -12,10 +12,10 @@ OS_HOME_PATH = os.environ['HOMEPATH']
 HOME_PATH = OS_HOME_DRIVE + OS_HOME_PATH + "\\Desktop\\"
 TARGET_DIR = HOME_PATH + "result\\"
 TARGET_DIR = "E:\\result\\"
-# TARGET_FILE = HOME_PATH + "src.xlsx"
+# TARGET_FILE = HOME_PATH + "backup.xlsx"
 # BASEPATH = os.path.dirname(os.path.realpath(__file__))
 # TARGET_DIR = BASEPATH + "\\result\\"
-# TARGET_FILE = BASEPATH + "\\src.xlsx"
+# TARGET_FILE = BASEPATH + "\\backup.xlsx"
 
 CONTENTS_ID = [114]
 # END_LECTURE_ID = [140, 83, 78, 79]

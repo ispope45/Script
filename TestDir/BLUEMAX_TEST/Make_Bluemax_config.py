@@ -29,7 +29,7 @@ BACKUP_PARAM = {"ha_backup": 1, "target": "POVS"}
 # cookies = {'_next_login': 'index', '_static': '88d4bcd01551a342f397603aace6b3dd74fcab1d77800188e0b0e8bf058bbdf3'}
 
 CUR_PATH = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\"
-SRC_FILE = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\src.xlsx"
+SRC_FILE = "C:\\Users\\work.Jungly\\Desktop\\BLUEMAX\\backup.xlsx"
 START_DATE = date.today()
 
 
