@@ -13,36 +13,38 @@ START_DATE = date.today()
 
 
 def davo4038_setting(ip, netmask, gw):
-    script = f'config\n' \
-             f'basic wan\n' \
-             f'static\n' \
-             f'{ip}\n' \
-             f'{netmask}\n' \
-             f'{gw}\n' \
-             f'168.126.63.1\n' \
-             f'168.126.63.2\n' \
-             f'y\n' \
-             f'apply\n'
+    script = [
+        f'config\n',
+        f'basic wan\n',
+        f'static\n',
+        f'{ip}\n',
+        f'{netmask}\n',
+        f'{gw}\n',
+        f'168.126.63.1\n',
+        f'168.126.63.2\n',
+        f'y\n',
+        f'apply\n']
     return script
 
 
 def davo504_setting(ip, netmask, gw):
-    script = f'config\n' \
-             f'configure\n' \
-             f'config wan\n' \
-             f'static\n' \
-             f'{ip}\n' \
-             f'{netmask}\n' \
-             f'{gw}\n' \
-             f'168.126.63.1\n' \
-             f'168.126.63.2\n' \
-             f'y\n' \
-             f'apply\n'
+    script = [
+        f'config\n',
+        f'configure\n',
+        f'config wan\n',
+        f'static\n',
+        f'{ip}\n',
+        f'{netmask}\n',
+        f'{gw}\n',
+        f'168.126.63.1\n',
+        f'168.126.63.2\n',
+        f'y\n',
+        f'apply\n']
     return script
 
 
 def samsung_setting(ip, netmask, gw):
-    script = f'config interface address {ip} {netmask} {gw}\n'
+    script = [f'config interface address {ip} {netmask} {gw}\n']
     return script
 
 
@@ -59,8 +61,12 @@ def main(sw_ip, sw_user, sw_pass, sw_port, command):
         conn.connect(host, username=username, password=password, port=sw_port, timeout=10)
         channel = conn.invoke_shell()
         time.sleep(2)
-        channel.send(command)
 
+        for line in command:
+            channel.send(line)
+            time.sleep(0.1)
+            # out_data, err_data = wait_streams(channel)
+            # output.append(out_data)
         return "OK"
 
     except Exception as e:
@@ -69,7 +75,7 @@ def main(sw_ip, sw_user, sw_pass, sw_port, command):
         if "WinError 10060" in str(e):
             return "Connection Error"
         # print(e)
-        return str(e)
+        return e
 
     finally:
         if conn is not None:
@@ -162,8 +168,8 @@ if __name__ == "__main__":
 
             res = main(preIP, devId, devPass, accessPort, script)
             if res:
-                ws[f'L{row}'].value = res
-                write_log(f'{schName};{preIP}:{accessPort};{res};')
+                ws[f'L{row}'].value = str(res)
+                write_log(f'{schName};{preIP}:{accessPort};{str(res)};')
 
         else:
             write_log(f'{schName};{preIP}:{accessPort};port check;False')
@@ -173,18 +179,19 @@ if __name__ == "__main__":
         wb.save(SRC_FILE)
 
     print("Post Port Check Phase....")
-    time.sleep(5)
+    time.sleep(10)
 
     for row in range(2, ws.max_row + 1):
         schName = ws[f'A{row}'].value
         postIP = ws[f'D{row}'].value
+
         accessPort = ws[f'G{row}'].value
 
         if port_check(postIP, accessPort):
             write_log(f'{schName};{postIP}:{accessPort};port check;OK')
             ws[f'K{row}'].value = "O"
         else:
-            write_log(f'{schName};{postIP}:{accessPort};port check;False')
+            write_log(f'{schName};{preIP}:{accessPort};port check;False')
             ws[f'K{row}'].value = "X"
 
         print_progress(row - 1, ws.max_row - 1, 'Progress:', 'Complete ', 1, 50)
