@@ -1,21 +1,12 @@
 import paramiko
 import time
-import win32com.client
+import openpyxl
 import os
-import telnetlib
-import csv
 
-
-OS_HOME_DRIVE = os.environ['HOMEDRIVE']
-OS_HOME_PATH = os.environ['HOMEPATH']
 CUR_PATH = os.getcwd()
-HOME_PATH = OS_HOME_DRIVE + OS_HOME_PATH + '\\Desktop\\'
-SRC_FILE = CUR_PATH + '\\Python_diag.xlsx'
-#SRC_FILE = '\\\\Filesvr\\인프라사업부\\95. 정기점검\\고려대학교부속병원_구로병원\\Python_diag.xlsx'
-DST_PATH = CUR_PATH + '\\'
 
 
-def main(sw_ip, sw_user, sw_pass):
+def main(sw_ip, sw_user, sw_pass, sw_port, sw_proto):
     host = sw_ip
     username = sw_user
     password = sw_pass
@@ -69,21 +60,24 @@ def wait_streams(channel):
 
 
 if __name__ == "__main__":
-    print(CUR_PATH)
-    excel = win32com.client.Dispatch("Excel.Application")
-    excel.Visible = False
 
-    wb = excel.Workbooks.Open(SRC_FILE)
-    ws = wb.ActiveSheet
+    SRC_FILE = CUR_PATH + "\\Python_diag.xlsx"
+    wb = openpyxl.load_workbook(SRC_FILE)
+    ws = wb.active
 
     for row in range(2, ws.UsedRange.Rows.Count+1):
-        f = open(DST_PATH + f'{str(int(ws.Cells(row, 1).Value))}_{ws.Cells(row, 2).Value}.txt', "w+")
-        sw_ip = ws.Cells(row, 3).Value
-        sw_user = ws.Cells(row, 4).Value
-        sw_pass = ws.Cells(row, 5).Value
-        e = main(sw_ip, sw_user, sw_pass)
+        f = open(CUR_PATH + f'{str(int(ws.Cells(row, 1).Value))}_{ws.Cells(row, 2).Value}.txt', "w+")
+        sw_idx = ws[f'A{row}'].value
+        sw_hostname = ws[f'B{row}'].value
+        sw_ip = ws[f'C{row}'].value
+        sw_user = ws[f'D{row}'].value
+        sw_pass = ws[f'E{row}'].value
+        sw_port = ws[f'F{row}'].value
+        sw_proto = ws[f'G{row}'].value
+        e = main(sw_ip, sw_user, sw_pass, sw_port, sw_proto)
         for line in e:
             print(line)
             f.write(line)
         f.close()
-    excel.Quit()
+
+    wb.close()
